@@ -12,7 +12,6 @@ import android.text.InputType
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import kotlinx.android.synthetic.main.activity_today.*
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,7 +27,8 @@ import java.util.concurrent.Executors
 import org.json.JSONException
 import android.text.TextUtils
 import android.content.Context.MODE_PRIVATE
-
+import android.widget.Switch
+import uk.ac.standrews.pescar.databinding.ActivityArchiveBinding
 
 
 /**
@@ -115,8 +115,9 @@ open class ArchiveActivity : AppCompatActivity() {
         }
 
         //Navigation
-        (navigation as BottomNavigationView).setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        (navigation as BottomNavigationView).menu.findItem(R.id.navigation_archive).isChecked = true
+        val navigation = findViewById<BottomNavigationView>(R.id.navigation)
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        navigation.menu.findItem(R.id.navigation_archive).isChecked = true
 
         authState = restoreAuthState()
     }
@@ -124,7 +125,7 @@ open class ArchiveActivity : AppCompatActivity() {
     private fun restoreAuthState(): AuthState? {
         val jsonString = getSharedPreferences("AuthStatePreference", Context.MODE_PRIVATE)
             .getString("AUTH_STATE", null)
-        if (!TextUtils.isEmpty(jsonString)) {
+        if (jsonString != null && !TextUtils.isEmpty(jsonString)) {
             try {
                 return AuthState.jsonDeserialize(jsonString)
             } catch (jsonException: JSONException) {
@@ -153,10 +154,11 @@ open class ArchiveActivity : AppCompatActivity() {
                 (this@ArchiveActivity.application as PescarApplication).startTrackingLocation()
             }
             else {
-                tracker.toggle()
+                findViewById<Switch>(R.id.tracker).toggle()
             }
             return
         }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     //Handle navigation

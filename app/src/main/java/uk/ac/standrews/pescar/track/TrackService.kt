@@ -44,7 +44,7 @@ class TrackService : Service() {
 
         var lastLocation: Location = Location(_provider)
 
-        override fun onLocationChanged(location: Location?) {
+        override fun onLocationChanged(location: Location) {
             lastLocation.set(location)
             this.writeLocation()
         }

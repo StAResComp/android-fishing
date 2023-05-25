@@ -7,7 +7,6 @@ import android.widget.Switch
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_today.*
 import java.util.*
 
 /**
@@ -27,7 +26,8 @@ class TodayActivity : ArchiveActivity() {
         //bindView()
 
         setUpTracker()
-        (navigation as BottomNavigationView).menu.findItem(R.id.navigation_today).isChecked = true
+        val navigation = findViewById<BottomNavigationView>(R.id.navigation)
+        navigation.menu.findItem(R.id.navigation_today).isChecked = true
     }
 
     override fun bindView() {

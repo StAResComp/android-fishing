@@ -28,7 +28,6 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import kotlinx.android.synthetic.main.activity_auth.navigation
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter
@@ -55,8 +54,9 @@ class AuthActivity : AppCompatActivity() {
         setContentView(R.layout.activity_auth)
         authBtn = findViewById(R.id.auth_button)
         authText = findViewById(R.id.auth_text)
-        (navigation as BottomNavigationView).setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
-        (navigation as BottomNavigationView).menu.findItem(R.id.navigation_link).isChecked = true
+        val navigation = findViewById<BottomNavigationView>(R.id.navigation)
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
+        navigation.menu.findItem(R.id.navigation_link).isChecked = true
 
         enablePostAuthorizationFlows()
 
@@ -150,7 +150,7 @@ class AuthActivity : AppCompatActivity() {
     private fun restoreAuthState(): AuthState? {
         val jsonString = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE)
             .getString(AUTH_STATE, null)
-        if (!TextUtils.isEmpty(jsonString)) {
+        if (jsonString != null && !TextUtils.isEmpty(jsonString)) {
             try {
                 return AuthState.jsonDeserialize(jsonString)
             } catch (jsonException: JSONException) {
