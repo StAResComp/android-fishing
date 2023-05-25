@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar
+package uk.ac.standrews.fishing
 
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -16,9 +16,9 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import net.openid.appauth.AuthState
-import uk.ac.standrews.pescar.fishing.FishingDao
-import uk.ac.standrews.pescar.fishing.Landed
-import uk.ac.standrews.pescar.fishing.Tow
+import uk.ac.standrews.fishing.fishing.FishingDao
+import uk.ac.standrews.fishing.fishing.Landed
+import uk.ac.standrews.fishing.fishing.Tow
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,7 +28,7 @@ import org.json.JSONException
 import android.text.TextUtils
 import android.content.Context.MODE_PRIVATE
 import android.widget.Switch
-import uk.ac.standrews.pescar.databinding.ActivityArchiveBinding
+import uk.ac.standrews.fishing.databinding.ActivityArchiveBinding
 
 
 /**
@@ -141,7 +141,7 @@ open class ArchiveActivity : AppCompatActivity() {
     }
 
     open fun setDayAndTime() {
-        day = (this.application as PescarApplication).getPeriodBoundaries(Date(intent.getLongExtra("midnight",0)))
+        day = (this.application as FishingApplication).getPeriodBoundaries(Date(intent.getLongExtra("midnight",0)))
         val c = Calendar.getInstance()
         c.time = day.first
         c.add(Calendar.HOUR_OF_DAY, 12)
@@ -151,7 +151,7 @@ open class ArchiveActivity : AppCompatActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == 568) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                (this@ArchiveActivity.application as PescarApplication).startTrackingLocation()
+                (this@ArchiveActivity.application as FishingApplication).startTrackingLocation()
             }
             else {
                 findViewById<Switch>(R.id.tracker).toggle()
@@ -331,7 +331,7 @@ open class ArchiveActivity : AppCompatActivity() {
             val landed = pair.second
             submitLanded(landed)
         }
-        if ((this.application as PescarApplication).postData(day, authState)) {
+        if ((this.application as FishingApplication).postData(day, authState)) {
             tows.forEach { tow ->
                 disableField(tow)
             }

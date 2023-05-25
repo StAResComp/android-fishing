@@ -1,11 +1,11 @@
-package uk.ac.standrews.pescar
+package uk.ac.standrews.fishing
 
 import androidx.room.*
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
-import uk.ac.standrews.pescar.fishing.*
-import uk.ac.standrews.pescar.track.Position
-import uk.ac.standrews.pescar.track.TrackDao
+import uk.ac.standrews.fishing.fishing.*
+import uk.ac.standrews.fishing.track.Position
+import uk.ac.standrews.fishing.track.TrackDao
 import java.util.Date
 import java.util.concurrent.Executors
 
@@ -49,7 +49,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "pescar"
+                    "fishing"
                 )
                     .fallbackToDestructiveMigration()
                     .addCallback(seedDatabaseCallback(context))

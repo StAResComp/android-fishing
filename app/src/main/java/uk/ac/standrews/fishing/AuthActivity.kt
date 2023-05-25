@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar
+package uk.ac.standrews.fishing
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -62,11 +62,11 @@ class AuthActivity : AppCompatActivity() {
 
         authBtn.setOnClickListener {view ->
             val serviceConfiguration = AuthorizationServiceConfiguration(
-                Uri.parse(getString(R.string.pescar_authorize_url)) /* auth endpoint */,
-                Uri.parse(getString(R.string.pescar_token_url)) /* token endpoint */
+                Uri.parse(getString(R.string.fishing_authorize_url)) /* auth endpoint */,
+                Uri.parse(getString(R.string.fishing_token_url)) /* token endpoint */
             )
-            val clientId = getString(R.string.pescar_client_id)
-            val redirectUri = Uri.parse(getString(R.string.pescar_auth_redirect_uri))
+            val clientId = getString(R.string.fishing_client_id)
+            val redirectUri = Uri.parse(getString(R.string.fishing_auth_redirect_uri))
             val builder = AuthorizationRequest.Builder(
                 serviceConfiguration,
                 clientId,
@@ -76,10 +76,15 @@ class AuthActivity : AppCompatActivity() {
             //builder.setScopes("profile")
             val request = builder.build()
             val authorizationService = AuthorizationService(view.context)
-            val action = "uk.ac.standrews.pescar.HANDLE_AUTHORIZATION_RESPONSE"
+            val action = "uk.ac.standrews.fishing.HANDLE_AUTHORIZATION_RESPONSE"
             val postAuthorizationIntent = Intent(view.context, AuthActivity::class.java)
             postAuthorizationIntent.action = action
-            val pendingIntent = PendingIntent.getActivity(view.context, request.hashCode(), postAuthorizationIntent, 0)
+            val pendingIntent = PendingIntent.getActivity(
+                view.context,
+                request.hashCode(),
+                postAuthorizationIntent,
+                PendingIntent.FLAG_IMMUTABLE
+            )
             authorizationService.performAuthorizationRequest(request, pendingIntent)
         }
 
@@ -202,7 +207,7 @@ class AuthActivity : AppCompatActivity() {
         if (intent != null) {
             val action = intent.action
             when (action) {
-                "uk.ac.standrews.pescar.HANDLE_AUTHORIZATION_RESPONSE" -> if (!intent.hasExtra(USED_INTENT)) {
+                "uk.ac.standrews.fishing.HANDLE_AUTHORIZATION_RESPONSE" -> if (!intent.hasExtra(USED_INTENT)) {
                     handleAuthorizationResponse(intent)
                     intent.putExtra(USED_INTENT, true)
                 }
@@ -217,7 +222,7 @@ class AuthActivity : AppCompatActivity() {
 
     private fun exportData() {
 
-        val exportDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "pescar_export_"+Calendar.getInstance().timeInMillis)
+        val exportDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "fishing_export_"+Calendar.getInstance().timeInMillis)
         if (!exportDir.exists()) {
             exportDir.mkdirs()
         }
@@ -260,7 +265,7 @@ class AuthActivity : AppCompatActivity() {
         emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         emailIntent.type = "vnd.android.cursor.dir/email"
         emailIntent.putExtra(Intent.EXTRA_STREAM, GenericFileProvider.getUriForFile(
-            this, "uk.ac.standrews.pescar", file))
+            this, "uk.ac.standrews.fishing", file))
         startActivityForResult(emailIntent, 101)
     }
 

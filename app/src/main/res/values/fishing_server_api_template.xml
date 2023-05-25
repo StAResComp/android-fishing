@@ -1,0 +1,7 @@
+<resources>
+    <!--<string name="fishing_authorize_url" translatable="false">https://arts.st-andrews.ac.uk/fishing-beta/o/authorize/</string>-->
+    <!--<string name="fishing_token_url" translatable="false">https://arts.st-andrews.ac.uk/fishing-beta/o/token/</string>-->
+    <!--<string name="fishing_data_url" translatable="false">https://arts.st-andrews.ac.uk/fishing-beta/api/data/</string>-->
+    <!--<string name="fishing_auth_redirect_uri" translatable="false">uk.ac.standrews.fishing://oauth2callback</string>-->
+    <!--<string name="fishing_client_id" translatable="false">YOUR_CLIENT_ID_HERE</string>-->
+</resources>

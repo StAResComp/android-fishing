@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar.fishing
+package uk.ac.standrews.fishing.fishing
 
 import androidx.room.*
 import java.util.*

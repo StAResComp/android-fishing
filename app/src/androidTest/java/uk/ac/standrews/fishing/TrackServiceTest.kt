@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar
+package uk.ac.standrews.fishing
 
 import android.content.Context
 import android.content.Intent
@@ -14,7 +14,7 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
-import uk.ac.standrews.pescar.track.TrackService
+import uk.ac.standrews.fishing.track.TrackService
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -46,7 +46,7 @@ class TrackServiceTest {
 
     @Test
     fun testLocationLogging() {
-        (InstrumentationRegistry.getTargetContext().applicationContext as PescarApplication).startTrackingLocation()
+        (InstrumentationRegistry.getTargetContext().applicationContext as FishingApplication).startTrackingLocation()
         val l = Location(locationProvider)
         val lat = (Math.random() - 0.5) * 2 * 90
         val lon = (Math.random() - 0.5) * 2 * 180
@@ -70,7 +70,7 @@ class TrackServiceTest {
 
     @Test
     fun test00rejection() {
-        (InstrumentationRegistry.getTargetContext().applicationContext as PescarApplication).startTrackingLocation()
+        (InstrumentationRegistry.getTargetContext().applicationContext as FishingApplication).startTrackingLocation()
         var numRowsPre = 0
         Executors.newSingleThreadExecutor().execute {
             numRowsPre = db.trackDao().countPositions()

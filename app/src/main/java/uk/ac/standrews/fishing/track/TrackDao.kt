@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar.track
+package uk.ac.standrews.fishing.track
 
 import androidx.room.*
 import java.util.Date

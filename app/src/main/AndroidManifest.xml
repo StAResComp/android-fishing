@@ -17,7 +17,7 @@
     <uses-feature android:name="android.hardware.location.network"/>
 
     <application
-            android:name=".PescarApplication"
+            android:name=".FishingApplication"
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
             android:label="@string/app_name"
@@ -58,7 +58,7 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value=".TodayActivity"/>
             <intent-filter>
-                <action android:name="uk.ac.standrews.pescar.HANDLE_AUTHORIZATION_RESPONSE"/>
+                <action android:name="uk.ac.standrews.fishing.HANDLE_AUTHORIZATION_RESPONSE"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
@@ -85,13 +85,13 @@
                 <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
-                <data android:scheme="uk.ac.standrews.pescar"/>
+                <data android:scheme="uk.ac.standrews.fishing"/>
             </intent-filter>
         </activity>
 
         <provider
                 android:name=".GenericFileProvider"
-                android:authorities="uk.ac.standrews.pescar"
+                android:authorities="uk.ac.standrews.fishing"
                 android:exported="false"
                 android:grantUriPermissions="true">
             <meta-data

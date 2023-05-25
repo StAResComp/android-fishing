@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar
+package uk.ac.standrews.fishing
 
 import android.app.Application
 import android.content.Context
@@ -13,7 +13,7 @@ import net.openid.appauth.AuthState
 import net.openid.appauth.AuthorizationService
 import org.json.JSONArray
 import org.json.JSONObject
-import uk.ac.standrews.pescar.track.TrackService
+import uk.ac.standrews.fishing.track.TrackService
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.Executors
@@ -23,7 +23,7 @@ import java.util.concurrent.Executors
  *
  * @constructor creates an instance with tracking location off
  */
-class PescarApplication : Application() {
+class FishingApplication : Application() {
 
     val VERSION: String = "0.1"
     val TIME_ZONE: TimeZone = TimeZone.getTimeZone("TIME_ZONE")
@@ -69,9 +69,9 @@ class PescarApplication : Application() {
         var success = true
         if (authState != null) {
             val authService = AuthorizationService(this)
-            authState.performActionWithFreshTokens(authService, AuthState.AuthStateAction { accessToken, idToken, ex ->
+            authState.performActionWithFreshTokens(authService, AuthState.AuthStateAction { accessToken, _, _ ->
                 Executors.newSingleThreadExecutor().execute {
-                    val db = AppDatabase.getAppDataBase(this@PescarApplication)
+                    val db = AppDatabase.getAppDataBase(this@FishingApplication)
                     val fishingDao = db.fishingDao()
                     val trackDao = db.trackDao()
                     val towsToUpload = fishingDao.getUnuploadedTowsForPeriod(day.first, day.second)
@@ -113,12 +113,12 @@ class PescarApplication : Application() {
                         }
 
                         val json = JSONObject()
-                        json.put("device", Settings.Secure.getString(this@PescarApplication.contentResolver, Settings.Secure.ANDROID_ID))
+                        json.put("device", Settings.Secure.getString(this@FishingApplication.contentResolver, Settings.Secure.ANDROID_ID))
                         json.put("tows", towsJson)
                         json.put("captures", landedsJson)
                         json.put("positions", positionsJson)
 
-                        val url = getString(R.string.pescar_data_url)
+                        val url = getString(R.string.fishing_data_url)
 
                         val callback = object : VolleyCallback {
                             override fun onSuccess(result: JSONObject) {
@@ -204,7 +204,7 @@ class PescarApplication : Application() {
                                 return headers
                             }
                         }
-                        RequestQueueSingleton.getInstance(this@PescarApplication).addToRequestQueue(request)
+                        RequestQueueSingleton.getInstance(this@FishingApplication).addToRequestQueue(request)
                     }
                 }
             })

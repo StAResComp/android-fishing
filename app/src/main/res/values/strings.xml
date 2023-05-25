@@ -1,6 +1,6 @@
 <resources>
 
-    <string name="app_name">Pescar</string>
+    <string name="app_name">Fishing</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -45,9 +45,9 @@
     <string name="stopped_tracking_location">Stopped tracking location</string>
 
     <!-- Notifications -->
-    <string name="tracking_notification_channel_name">Pescar Location Tracking</string>
+    <string name="tracking_notification_channel_name">Fishing Location Tracking</string>
     <string name="tracking_notification_title">Tracking location</string>
-    <string name="tracking_notification_text">The Pescar app is tracking your location</string>
+    <string name="tracking_notification_text">The Fishing app is tracking your location</string>
 
     <!-- Map -->
     <string name="title_activity_maps">Map</string>

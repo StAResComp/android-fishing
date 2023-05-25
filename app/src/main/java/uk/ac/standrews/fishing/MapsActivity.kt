@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar
+package uk.ac.standrews.fishing
 
 import android.os.Bundle
 import android.util.Log
@@ -10,7 +10,7 @@ import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
-import uk.ac.standrews.pescar.track.Position
+import uk.ac.standrews.fishing.track.Position
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*

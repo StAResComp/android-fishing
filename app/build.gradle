@@ -7,14 +7,14 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 33
     defaultConfig {
-        applicationId "uk.ac.standrews.pescar"
+        applicationId "uk.ac.standrews.fishing"
         minSdkVersion 21
         targetSdkVersion 33
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         manifestPlaceholders = [
-                appAuthRedirectScheme: 'uk.ac.st-andrews.arts.pescar'
+                appAuthRedirectScheme: 'uk.ac.st-andrews.arts.fishing'
         ]
     }
     buildTypes {
@@ -26,7 +26,7 @@ android {
     buildFeatures {
         viewBinding = true
     }
-    namespace 'uk.ac.standrews.pescar'
+    namespace 'uk.ac.standrews.fishing'
 }
 
 dependencies {

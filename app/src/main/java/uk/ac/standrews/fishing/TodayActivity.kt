@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar
+package uk.ac.standrews.fishing
 
 import android.Manifest
 import android.content.pm.PackageManager
@@ -35,7 +35,7 @@ class TodayActivity : ArchiveActivity() {
     }
 
     override fun setDayAndTime() {
-        this.day = (this.application as PescarApplication).getPeriodBoundaries()
+        this.day = (this.application as FishingApplication).getPeriodBoundaries()
         val c = Calendar.getInstance()
         c.time = day.first
         c.add(Calendar.HOUR_OF_DAY, 12)
@@ -45,11 +45,11 @@ class TodayActivity : ArchiveActivity() {
     private fun setUpTracker() {
         //Bind tracker switch to widget and set listener
         tracker = findViewById(R.id.tracker)
-        if ((this.application as PescarApplication).trackingLocation) {
+        if ((this.application as FishingApplication).trackingLocation) {
             tracker.toggle()
         }
         tracker.setOnCheckedChangeListener { _, isChecked ->
-            var app = this@TodayActivity.application as PescarApplication
+            var app = this@TodayActivity.application as FishingApplication
             if (!isChecked) {
                 app.stopTrackingLocation()
             }
@@ -72,12 +72,13 @@ class TodayActivity : ArchiveActivity() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == 568) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                (this@TodayActivity.application as PescarApplication).startTrackingLocation()
+                (this@TodayActivity.application as FishingApplication).startTrackingLocation()
             }
             else {
                 tracker.toggle()
             }
             return
         }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

@@ -1,4 +1,4 @@
-package uk.ac.standrews.pescar.track
+package uk.ac.standrews.fishing.track
 
 import android.app.*
 import android.content.Context
@@ -14,9 +14,9 @@ import android.os.IBinder
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import android.util.Log
-import uk.ac.standrews.pescar.AppDatabase
-import uk.ac.standrews.pescar.R
-import uk.ac.standrews.pescar.TodayActivity
+import uk.ac.standrews.fishing.AppDatabase
+import uk.ac.standrews.fishing.R
+import uk.ac.standrews.fishing.TodayActivity
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -30,7 +30,7 @@ class TrackService : Service() {
     private val _locationInterval: Long = 120000
     private val _locationDistance: Float = 5f
     private val _trackingNotificationId: Int = 568
-    private val _pescarTrackingChannel: String = "pescar_tracking_channel"
+    private val _fishingTrackingChannel: String = "fishing_tracking_channel"
     private val _provider: String = LocationManager.GPS_PROVIDER
     private val _tag: String = "TRACK"
 
@@ -128,13 +128,13 @@ class TrackService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(
                 NotificationChannel(
-                    _pescarTrackingChannel,
+                    _fishingTrackingChannel,
                     getString(
                         R.string.tracking_notification_channel_name),
                     NotificationManager.IMPORTANCE_HIGH
                 )
             )
-            return Notification.Builder(this, _pescarTrackingChannel)
+            return Notification.Builder(this, _fishingTrackingChannel)
                 .setContentTitle(getString(R.string.tracking_notification_title))
                 .setContentText(getString(R.string.tracking_notification_text))
                 .setSmallIcon(android.R.drawable.ic_menu_mylocation)
@@ -144,7 +144,7 @@ class TrackService : Service() {
                 .build()
         }
         else {
-            return NotificationCompat.Builder(this, _pescarTrackingChannel)
+            return NotificationCompat.Builder(this, _fishingTrackingChannel)
                 .setContentTitle(getString(R.string.tracking_notification_title))
                 .setContentText(getString(R.string.tracking_notification_text))
                 .setSmallIcon(android.R.drawable.ic_menu_mylocation)

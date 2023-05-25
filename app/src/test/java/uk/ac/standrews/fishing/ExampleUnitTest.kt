@@ -1,4 +1,4 @@
-//package uk.ac.standrews.pescar
+//package uk.ac.standrews.fishing
 
 //import org.junit.Test
 
