@@ -1,6 +1,6 @@
 # YAML 1.2
 ---
-authors: 
+authors:
   -
     affiliation: "University of St Andrews"
     family-names: McCann
@@ -13,6 +13,6 @@ authors:
 cff-version: "1.0.3"
 license: MIT
 message: "If you use this software, please cite it using these metadata."
-repository-code: "https://github.com/StAResComp/DYNAMICOPERU"
-title: "DYNAMICOPERU Pescar App"
+repository-code: "https://github.com/StAResComp/android-fishing"
+title: "Android Fishing App"
 ...
