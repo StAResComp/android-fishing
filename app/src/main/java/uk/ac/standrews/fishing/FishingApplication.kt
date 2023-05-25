@@ -74,30 +74,20 @@ class FishingApplication : Application() {
                     val db = AppDatabase.getAppDataBase(this@FishingApplication)
                     val fishingDao = db.fishingDao()
                     val trackDao = db.trackDao()
-                    val towsToUpload = fishingDao.getUnuploadedTowsForPeriod(day.first, day.second)
                     val landedsToUpload = fishingDao.getUnuploadedLandedsForPeriod(day.first, day.second)
                     val positionsToUpload = trackDao.getUnuploadedPositions()
 
-                    if (towsToUpload.isNotEmpty() || landedsToUpload.isNotEmpty() || positionsToUpload.isNotEmpty()) {
+                    if (landedsToUpload.isNotEmpty() || positionsToUpload.isNotEmpty()) {
                         val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
                         //df.timeZone = TimeZone.getTimeZone("UTC")
-
-                        val towsJson = JSONArray()
-                        towsToUpload.forEach { tow ->
-                            val towJson = JSONObject()
-                            towJson.put("id", tow.id)
-                            towJson.put("weight", tow.weight)
-                            towJson.put("timestamp", df.format(tow.timestamp))
-                            towsJson.put(towJson)
-                        }
 
                         val landedsJson = JSONArray()
                         landedsToUpload.forEach { lws ->
                             val landedJson = JSONObject()
-                            landedJson.put("id", lws.landed.id)
+                            landedJson.put("id", lws.aCatch.id)
                             landedJson.put("species", lws.species.first().name)
-                            landedJson.put("weight", lws.landed.weight)
-                            landedJson.put("timestamp", df.format(lws.landed.timestamp))
+                            landedJson.put("weight", lws.aCatch.weight)
+                            landedJson.put("timestamp", df.format(lws.aCatch.timestamp))
                             landedsJson.put(landedJson)
                         }
 
@@ -114,7 +104,6 @@ class FishingApplication : Application() {
 
                         val json = JSONObject()
                         json.put("device", Settings.Secure.getString(this@FishingApplication.contentResolver, Settings.Secure.ANDROID_ID))
-                        json.put("tows", towsJson)
                         json.put("captures", landedsJson)
                         json.put("positions", positionsJson)
 
@@ -140,17 +129,6 @@ class FishingApplication : Application() {
                                     positionIds.add((positionsJson[i] as JSONObject).getInt("id"))
                                 }
                                 Executors.newSingleThreadExecutor().execute {
-                                    if (towIds.isNotEmpty()) {
-                                        if (towIds.size > 999) {
-                                            val chunkedTowIds = towIds.chunked(999)
-                                            chunkedTowIds.forEach { list ->
-                                                fishingDao.markTowsUploaded(list, Date())
-                                            }
-                                        }
-                                        else {
-                                            fishingDao.markTowsUploaded(towIds, Date())
-                                        }
-                                    }
                                     if (landedIds.isNotEmpty()) {
                                         if (landedIds.size > 999) {
                                             val chunkedLandedIds = landedIds.chunked(999)

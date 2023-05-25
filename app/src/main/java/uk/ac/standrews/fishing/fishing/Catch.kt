@@ -10,11 +10,10 @@ import java.util.*
  * @property speciesId the id of the [Species] landed
  * @property weight the weight landed in kg
  * @property timestamp when the landing was recorded
- * @property tripId the id of the [Trip] on which the tow was made
  * @property uploaded when the data was uploaded to the server
  */
 @Entity(
-    tableName = "landed",
+    tableName = "catch",
     foreignKeys = [
         ForeignKey(
             entity = Species::class,
@@ -26,7 +25,7 @@ import java.util.*
         Index("species_id")
     ]
 )
-data class Landed(
+data class Catch(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "species_id") var speciesId: Int,
     var weight: Double,

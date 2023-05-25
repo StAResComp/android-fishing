@@ -17,8 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import net.openid.appauth.AuthState
 import uk.ac.standrews.fishing.fishing.FishingDao
-import uk.ac.standrews.fishing.fishing.Landed
-import uk.ac.standrews.fishing.fishing.Tow
+import uk.ac.standrews.fishing.fishing.Catch
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,9 +25,7 @@ import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import org.json.JSONException
 import android.text.TextUtils
-import android.content.Context.MODE_PRIVATE
 import android.widget.Switch
-import uk.ac.standrews.fishing.databinding.ActivityArchiveBinding
 
 
 /**
@@ -39,7 +36,6 @@ open class ArchiveActivity : AppCompatActivity() {
     //Need to be bound to widget in onCreate
     private lateinit var mapButton: Button
     private lateinit var submitButton: Button
-    private lateinit var tows: Array<EditText>
     private lateinit var landeds: Array<Pair<TextView, EditText>>
     private lateinit var fishingDao: FishingDao
     private var authState: AuthState? = null
@@ -67,15 +63,6 @@ open class ArchiveActivity : AppCompatActivity() {
 
         mapButton = findViewById(R.id.map_button)
 
-        tows = arrayOf(
-            findViewById(R.id.tow_1),
-            findViewById(R.id.tow_2),
-            findViewById(R.id.tow_3),
-            findViewById(R.id.tow_4),
-            findViewById(R.id.tow_5),
-            findViewById(R.id.tow_6)
-        )
-
         landeds = arrayOf(
             Pair(findViewById(R.id.species_1_label), findViewById(R.id.species_1)),
             Pair(findViewById(R.id.species_2_label), findViewById(R.id.species_2)),
@@ -86,8 +73,6 @@ open class ArchiveActivity : AppCompatActivity() {
         )
 
         submitButton = findViewById(R.id.submit_button)
-
-        doTowFields()
 
         doLandedFields()
 
@@ -194,59 +179,6 @@ open class ArchiveActivity : AppCompatActivity() {
         false
     }
 
-    private fun doTowFields() {
-
-        //Get existing values
-        val towsCallable = Callable {
-            fishingDao.getTowsForPeriod(day.first, day.second)
-        }
-        val towList = Executors.newSingleThreadExecutor().submit(towsCallable).get()
-        var uploaded = false
-        towList.forEachIndexed { index, tow ->
-            tows[index].tag = tow.id
-            tows[index].setText(tow.weight.toString())
-            if (tow.uploaded != null) {
-                uploaded = true
-            }
-        }
-        if (uploaded) {
-            tows.forEach { tow ->
-                disableField(tow)
-            }
-            landeds.forEach { landed ->
-                disableField(landed.second  )
-            }
-            submitButton.visibility = View.GONE
-        }
-
-        //Set listeners
-        tows.forEach { textField ->
-            textField.setOnFocusChangeListener { view, hasFocus ->
-                if (!hasFocus) {
-                    val field = view as EditText
-                    submitTow(field)
-                }
-            }
-        }
-    }
-
-    private fun submitTow(field: EditText) {
-        if (field.text.matches("\\d+(\\.\\d+)?".toRegex())) {
-            if (field.tag is Number) {
-                Executors.newSingleThreadExecutor().execute {
-                    fishingDao.updateTow((field.tag as Int), field.text.toString().toDouble(), timestamp)
-                }
-            } else {
-                val c = Callable {
-                    fishingDao.insertTow(
-                        Tow(weight = field.text.toString().toDouble(), timestamp = timestamp)
-                    ).toInt()
-                }
-                field.tag = Executors.newSingleThreadExecutor().submit(c).get()
-            }
-        }
-    }
-
     private fun doLandedFields() {
 
         //Get existing values
@@ -264,11 +196,11 @@ open class ArchiveActivity : AppCompatActivity() {
             var empty = true
             landedsList.forEach { lws ->
                 if (empty && lws.species.first().id == species.id) {
-                    landeds[index].second.setTag(R.id.landed_id_key, lws.landed.id)
-                    landeds[index].second.setText(lws.landed.weight.toString())
+                    landeds[index].second.setTag(R.id.landed_id_key, lws.aCatch.id)
+                    landeds[index].second.setText(lws.aCatch.weight.toString())
                     empty = false
                 }
-                if (lws.landed.uploaded != null) {
+                if (lws.aCatch.uploaded != null) {
                     uploaded = true
                 }
             }
@@ -278,9 +210,6 @@ open class ArchiveActivity : AppCompatActivity() {
             landeds[index].second.setTag(R.id.species_id_key, species.id)
         }
         if (uploaded) {
-            tows.forEach { tow ->
-                disableField(tow)
-            }
             landeds.forEach { landed ->
                 disableField(landed.second)
             }
@@ -311,7 +240,7 @@ open class ArchiveActivity : AppCompatActivity() {
             else {
                 val c = Callable {
                     fishingDao.insertLanded(
-                        Landed(
+                        Catch(
                             weight = field.text.toString().toDouble(),
                             timestamp = timestamp,
                             speciesId = (field.getTag(R.id.species_id_key) as Int)
@@ -324,17 +253,11 @@ open class ArchiveActivity : AppCompatActivity() {
     }
 
     private fun submitData() {
-        tows.forEach { tow ->
-            submitTow(tow)
-        }
         landeds.forEach { pair ->
             val landed = pair.second
             submitLanded(landed)
         }
         if ((this.application as FishingApplication).postData(day, authState)) {
-            tows.forEach { tow ->
-                disableField(tow)
-            }
             landeds.forEach { pair ->
                 val landed = pair.second
                 disableField(landed)
