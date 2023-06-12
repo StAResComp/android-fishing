@@ -123,7 +123,7 @@ class TrackService : Service() {
             this.applicationContext, TodayActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this.applicationContext, 0,
-            notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+            notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannel(

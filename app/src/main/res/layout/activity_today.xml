@@ -20,7 +20,7 @@
                 android:columnCount="2"
                 app:layout_constraintTop_toTopOf="parent">
 
-            <Switch
+            <!--<Switch
                     android:id="@+id/tracker"
                     android:layout_width="wrap_content"
                     android:layout_height="100dp"
@@ -29,7 +29,15 @@
                     android:layout_marginLeft="40dp"
                     android:layout_marginStart="40dp"
                     android:scaleX="4"
-                    android:scaleY="4"/>
+                    android:scaleY="4"/>-->
+
+            <androidx.compose.ui.platform.ComposeView
+                android:id="@+id/compose_view"
+                android:layout_width="wrap_content"
+                android:layout_height="100dp"
+                android:layout_columnWeight="1"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="40dp" />
 
             <Button
                     android:id="@+id/map_button"

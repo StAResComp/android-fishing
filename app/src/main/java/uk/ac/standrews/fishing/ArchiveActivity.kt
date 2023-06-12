@@ -139,7 +139,7 @@ open class ArchiveActivity : AppCompatActivity() {
                 (this@ArchiveActivity.application as FishingApplication).startTrackingLocation()
             }
             else {
-                findViewById<Switch>(R.id.tracker).toggle()
+                //findViewById<Switch>(R.id.tracker).toggle()
             }
             return
         }

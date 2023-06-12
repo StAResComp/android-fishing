@@ -3,7 +3,17 @@ package uk.ac.standrews.fishing
 import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Switch
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.material3.Switch
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -14,8 +24,7 @@ import java.util.*
  */
 class TodayActivity : ArchiveActivity() {
 
-    //Need to be bound to widget in onCreate
-    private lateinit var tracker: Switch
+    private var trackingLocation by mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,15 +32,24 @@ class TodayActivity : ArchiveActivity() {
         //setDayAndTime()
 
         //Bind to layout
-        //bindView()
+        bindView()
 
-        setUpTracker()
+        //setUpTracker()
         val navigation = findViewById<BottomNavigationView>(R.id.navigation)
         navigation.menu.findItem(R.id.navigation_today).isChecked = true
     }
 
     override fun bindView() {
-        setContentView(R.layout.activity_today)
+        val app = this.application as FishingApplication
+        this.trackingLocation = app.trackingLocation
+        setContentView(R.layout.activity_today).apply {
+            val composeView = findViewById<ComposeView>(R.id.compose_view)
+            composeView.setContent {
+                MaterialTheme {
+                    TrackSwitch(this@TodayActivity.trackingLocation) { this@TodayActivity.toggleTracking() }
+                }
+            }
+        }
     }
 
     override fun setDayAndTime() {
@@ -42,43 +60,36 @@ class TodayActivity : ArchiveActivity() {
         timestamp = c.time
     }
 
-    private fun setUpTracker() {
-        //Bind tracker switch to widget and set listener
-        tracker = findViewById(R.id.tracker)
-        if ((this.application as FishingApplication).trackingLocation) {
-            tracker.toggle()
+    private fun toggleTracking() {
+        if (ContextCompat.checkSelfPermission(this@TodayActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this@TodayActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 568)
         }
-        tracker.setOnCheckedChangeListener { _, isChecked ->
-            var app = this@TodayActivity.application as FishingApplication
-            if (!isChecked) {
-                app.stopTrackingLocation()
-            }
-            else if (isChecked && ContextCompat.checkSelfPermission(
-                    this@TodayActivity, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(
-                    this@TodayActivity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 568)
-            }
-            else if (isChecked && ContextCompat.checkSelfPermission(this@TodayActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                app.startTrackingLocation()
-            }
-            else {
-                tracker.toggle()
-            }
+        else{
+            (this.application as FishingApplication).toggleLocationTracking()
         }
+        this.trackingLocation = (this.application as FishingApplication).trackingLocation
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         if (requestCode == 568) {
             if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                (this@TodayActivity.application as FishingApplication).startTrackingLocation()
-            }
-            else {
-                tracker.toggle()
+                (this.application as FishingApplication).toggleLocationTracking()
             }
             return
         }
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }
+
+@Composable
+fun TrackSwitch(tracking: Boolean, toggleFun: () -> Unit) {
+    Switch(
+        checked = tracking,
+        onCheckedChange = { toggleFun() }
+    )
+}
+
+
+
+
+

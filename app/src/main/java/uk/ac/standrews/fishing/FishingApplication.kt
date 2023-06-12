@@ -25,16 +25,28 @@ import java.util.concurrent.Executors
  */
 class FishingApplication : Application() {
 
-    val VERSION: String = "0.1"
-    val TIME_ZONE: TimeZone = TimeZone.getTimeZone("TIME_ZONE")
-
     var trackingLocation: Boolean = false
+
+    /**
+     * Toggles location tracking
+     */
+    fun toggleLocationTracking() {
+        Log.d("TRACK","Toggling tracking in application class")
+        if (this.trackingLocation) {
+            this.stopTrackingLocation()
+        }
+        else {
+            this.startTrackingLocation()
+        }
+        Log.d("TRACK","Tracking: ${this.trackingLocation}")
+    }
 
     /**
      * Starts location tracking
      */
     fun startTrackingLocation() {
         startService(Intent(this,TrackService::class.java))
+        Toast.makeText(baseContext, R.string.started_tracking_location, Toast.LENGTH_LONG).show()
         trackingLocation = true
     }
 

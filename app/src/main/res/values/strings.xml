@@ -43,6 +43,7 @@
 
     <!-- Tracking -->
     <string name="stopped_tracking_location">Stopped tracking location</string>
+    <string name="started_tracking_location">Started tracking location</string>
 
     <!-- Notifications -->
     <string name="tracking_notification_channel_name">Fishing Location Tracking</string>
