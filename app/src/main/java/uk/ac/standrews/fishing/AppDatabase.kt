@@ -17,10 +17,11 @@ import java.util.concurrent.Executors
 @Database(
     entities = [
         Position::class,
-        Species::class,
-        Catch::class
+        Catch::class,
+        NephropsCatch::class,
+        LobsterCrabCatch::class
     ],
-    version = 5,
+    version = 8,
     exportSchema = false
 )
 @TypeConverters(DateTypeConverter::class)
@@ -62,21 +63,6 @@ abstract class AppDatabase : RoomDatabase() {
             return object : Callback() {
                 override fun onCreate(db: SupportSQLiteDatabase) {
                     super.onCreate(db)
-                    Executors.newSingleThreadExecutor().execute {
-                        val speciesToInsert = Species.getInitialData()
-                        val fishingDao = getAppDataBase(context).fishingDao()
-                        val currentSpeciesNames = fishingDao.getSpeciesNames()
-                        if (currentSpeciesNames.isEmpty()) {
-                            fishingDao.insertSpecies(speciesToInsert)
-                        }
-                        else {
-                            for (species in speciesToInsert) {
-                                if (!currentSpeciesNames.contains(species.name)) {
-                                    fishingDao.insertSpecies(species)
-                                }
-                            }
-                        }
-                    }
                 }
             }
         }

@@ -16,7 +16,7 @@ import androidx.core.app.NotificationCompat
 import android.util.Log
 import uk.ac.standrews.fishing.AppDatabase
 import uk.ac.standrews.fishing.R
-import uk.ac.standrews.fishing.TodayActivity
+import uk.ac.standrews.fishing.CatchActivity
 import java.lang.Exception
 import java.lang.IllegalArgumentException
 import java.util.*
@@ -120,7 +120,7 @@ class TrackService : Service() {
 
     private fun getNotification(): Notification {
         val notificationIntent = Intent(
-            this.applicationContext, TodayActivity::class.java)
+            this.applicationContext, CatchActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this.applicationContext, 0,
             notificationIntent, PendingIntent.FLAG_IMMUTABLE)

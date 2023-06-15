@@ -13,31 +13,43 @@ import java.util.Date
 interface FishingDao {
 
     @Insert
-    fun insertSpecies(species: Array<Species>)
+    fun insertCatch(aCatch: Catch): Long
 
     @Insert
-    fun insertSpecies(species: Species)
+    fun insertNephropsCatch(nephropsCatch: NephropsCatch): Long
 
     @Insert
-    fun insertLanded(aCatch: Catch): Long
+    fun insertLobsterCrabCatch(lobsterCrabCatch: LobsterCrabCatch): Long
 
-    @Query("SELECT * FROM species ORDER BY id ASC")
-    fun getSpecies(): Array<Species>
+    @Query("SELECT * FROM catch ORDER BY timestamp ASC")
+    fun getCatches(): Array<Catch>
 
-    @Query("SELECT name FROM species ORDER BY id ASC")
-    fun getSpeciesNames(): Array<String>
-
-    @Transaction
-    @Query("SELECT l.* FROM species s INNER JOIN catch l ON s.id = l.species_id WHERE l.timestamp >= :startedAt AND l.timestamp < :finishedAt ORDER BY s.id ASC")
-    fun getLandedsForPeriod(startedAt: Date, finishedAt: Date): Array<CatchWithSpecies>
-
-    @Query("UPDATE catch SET weight = :weight, timestamp = :timestamp WHERE id = :id")
-    fun updateLanded(id: Int, weight: Double, timestamp: Date)
-
-    @Transaction
-    @Query("SELECT * FROM catch WHERE uploaded IS NULL AND timestamp >= :startedAt AND timestamp < :finishedAt")
-    fun getUnuploadedLandedsForPeriod(startedAt: Date, finishedAt: Date): List<CatchWithSpecies>
-
-    @Query("UPDATE catch SET uploaded = :timestamp WHERE id IN (:ids)")
-    fun markLandedsUploaded(ids: List<Int>, timestamp: Date)
+    @Query("""
+        SELECT
+            c.id,
+            c.string_num as stringNum,
+            c.lat,
+            c.lon,
+            c.timestamp,
+            c.uploaded,
+            n.num_small_cases as numSmallCases,
+            n.num_medium_cases as numMediumCases,
+            n.num_large_cases as numLargeCases,
+            n.wt_returned as wtReturned,
+            l.num_lobsters_retained as numLobstersRetained,
+            l.num_lobsters_returned as numLobstersReturned,
+            l.num_brown_retained as numBrownRetained,
+            l.num_brown_returned as numBrownReturned,
+            l.num_velvet_retained as numVelvetRetained,
+            l.num_velvet_returned as numVelvetReturned
+        FROM
+            catch c
+        LEFT OUTER JOIN
+            nephrops_catch n ON c.id = n.catch_id
+        LEFT OUTER JOIN
+            lobster_crab_catch l ON c.id = l.catch_id
+        ORDER BY
+            c.timestamp
+    """)
+    fun getFullCatches(): Array<FullCatch>
 }

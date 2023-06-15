@@ -4,31 +4,125 @@ import androidx.room.*
 import java.util.*
 
 /**
- * Describes the amount of a species landed following a trip
+ * Describes the catch for a specified string
  *
  * @property id numeric id, autoincremented by the database
- * @property speciesId the id of the [Species] landed
- * @property weight the weight landed in kg
- * @property timestamp when the landing was recorded
+ * @property stringId the fisher's identifier for the string
+ * @property lat the latitude of the catch location
+ * @property lon the longitude of the catch location
+ * @property timestamp when the catch was made
  * @property uploaded when the data was uploaded to the server
  */
 @Entity(
-    tableName = "catch",
-    foreignKeys = [
-        ForeignKey(
-            entity = Species::class,
-            parentColumns = ["id"],
-            childColumns = ["species_id"]
-        )
-    ],
-    indices = [
-        Index("species_id")
-    ]
+    tableName = "catch"
 )
 data class Catch(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "species_id") var speciesId: Int,
-    var weight: Double,
+    @ColumnInfo(name = "string_num") var stringId: String,
+    var lat: Double,
+    var lon: Double,
     var timestamp: Date,
     var uploaded: Date? = null
+)
+
+/**
+ * Describes the detail of a nephrops catch
+ *
+ * @property id numeric id, autoincremented by the database
+ * @property catchId the id of the corresponding Catch
+ * @property numSmall the number graded as "small"
+ * @property numMedium the number graded as "medium"
+ * @property numLarge the number graded as "large"
+ * @property numCases the number of cases
+ * @property wtReturned the weight returned
+ */
+@Entity(
+    tableName = "nephrops_catch",
+    foreignKeys = [
+        ForeignKey(
+            entity = Catch::class,
+            parentColumns = ["id"],
+            childColumns = ["catch_id"]
+        )
+    ],
+)
+data class NephropsCatch(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "catch_id") var catchId: Int,
+    @ColumnInfo(name = "num_small_cases") var numSmallCases: Double = 0.0,
+    @ColumnInfo(name = "num_medium_cases") var numMediumCases: Double = 0.0,
+    @ColumnInfo(name = "num_large_cases") var numLargeCases: Double = 0.0,
+    @ColumnInfo(name = "wt_returned") var wtReturned: Double = 0.0,
+)
+
+/**
+ * Describes the detail of a lobster/crab catch
+ *
+ * @property id numeric id, autoincremented by the database
+ * @property catchId the id of the corresponding Catch
+ * @property numLobstersRetained the number of lobsters retained
+ * @property numLobstersReturned the number of lobsters returned
+ * @property numBrownRetained the number of brown crabs retained
+ * @property numBrownReturned the number of brown crabs returned
+ * @property numVelvetRetained the number of velvet crabs retained
+ * @property numVelvetReturned the number of velvet crabs returned
+ */
+@Entity(
+    tableName = "lobster_crab_catch",
+    foreignKeys = [
+        ForeignKey(
+            entity = Catch::class,
+            parentColumns = ["id"],
+            childColumns = ["catch_id"]
+        )
+    ],
+)
+data class LobsterCrabCatch(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "catch_id") var catchId: Int,
+    @ColumnInfo(name = "num_lobsters_retained") var numLobstersRetained: Int = 0,
+    @ColumnInfo(name = "num_lobsters_returned") var numLobstersReturned: Int = 0,
+    @ColumnInfo(name = "num_brown_retained") var numBrownRetained: Int = 0,
+    @ColumnInfo(name = "num_brown_returned") var numBrownReturned: Int = 0,
+    @ColumnInfo(name = "num_velvet_retained") var numVelvetRetained: Int = 0,
+    @ColumnInfo(name = "num_velvet_returned") var numVelvetReturned: Int = 0
+)
+
+/**
+ * Describes the full details of a catch for a specified string
+ *
+ * @property id id of the Catch record
+ * @property stringNum the string number
+ * @property lat the latitude of the catch location
+ * @property lon the longitude of the catch location
+ * @property timestamp when the catch was made
+ * @property uploaded when the data was uploaded to the server
+ * @property numSmallCases the number of "small" nephrops cases
+ * @property numMediumCases the number of "medium" nephrops cases
+ * @property numLargeCases the number of "large" nephrops cases
+ * @property wtReturned the weight of nephrops returned
+ * @property numLobstersRetained the number of lobsters retained
+ * @property numLobstersReturned the number of lobsters returned
+ * @property numBrownRetained the number of brown crabs retained
+ * @property numBrownReturned the number of brown crabs returned
+ * @property numVelvetRetained the number of velvet crabs retained
+ * @property numVelvetReturned the number of velvet crabs returned
+ */
+data class FullCatch (
+    val id: Int = 0,
+    val stringNum: String,
+    val lat: Double,
+    val lon: Double,
+    val timestamp: Date,
+    val uploaded: Date? = null,
+    val numSmallCases: Double?,
+    val numMediumCases: Double?,
+    val numLargeCases: Double?,
+    val wtReturned: Double?,
+    val numLobstersRetained: Int?,
+    val numLobstersReturned: Int?,
+    val numBrownRetained: Int?,
+    val numBrownReturned: Int?,
+    val numVelvetRetained: Int?,
+    val numVelvetReturned: Int?
 )

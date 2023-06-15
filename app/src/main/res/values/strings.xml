@@ -6,7 +6,7 @@
     <string name="no">No</string>
 
     <!-- Screen titles -->
-    <string name="title_today">Today</string>
+    <string name="title_catch">Catch</string>
     <string name="title_archive">Archive</string>
     <string name="title_settings">Settings</string>
 
@@ -19,8 +19,6 @@
     <string name="tow_6">Tow 6</string>
 
     <string name="weight">Wt. (kg)</string>
-
-    <string name="haul">Haul</string>
 
     <string name="shrimp">Shrimp</string>
     <string name="species_2">Species 2</string>
@@ -42,6 +40,7 @@
     <string name="view_map">View Map</string>
 
     <!-- Tracking -->
+    <string name="tracking">Tracking</string>
     <string name="stopped_tracking_location">Stopped tracking location</string>
     <string name="started_tracking_location">Started tracking location</string>
 
