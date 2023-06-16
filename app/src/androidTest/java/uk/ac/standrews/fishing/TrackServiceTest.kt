@@ -1,7 +1,6 @@
 package uk.ac.standrews.fishing
 
 import android.content.Context
-import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
 import androidx.test.InstrumentationRegistry
@@ -14,7 +13,6 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
-import uk.ac.standrews.fishing.track.TrackService
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

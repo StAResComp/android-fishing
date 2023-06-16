@@ -4,10 +4,7 @@ import androidx.room.*
 import android.content.Context
 import androidx.sqlite.db.SupportSQLiteDatabase
 import uk.ac.standrews.fishing.fishing.*
-import uk.ac.standrews.fishing.track.Position
-import uk.ac.standrews.fishing.track.TrackDao
 import java.util.Date
-import java.util.concurrent.Executors
 
 /**
  * Defines the database for the app.
@@ -16,21 +13,15 @@ import java.util.concurrent.Executors
  */
 @Database(
     entities = [
-        Position::class,
         Catch::class,
         NephropsCatch::class,
         LobsterCrabCatch::class
     ],
-    version = 8,
+    version = 9,
     exportSchema = false
 )
 @TypeConverters(DateTypeConverter::class)
 abstract class AppDatabase : RoomDatabase() {
-
-    /**
-     * Database access object for location tracking data
-     */
-    abstract fun trackDao() : TrackDao
 
     /**
      * Database access object for fishing activity data
@@ -52,18 +43,9 @@ abstract class AppDatabase : RoomDatabase() {
                     "fishing"
                 )
                     .fallbackToDestructiveMigration()
-                    .addCallback(seedDatabaseCallback(context))
                     .build()
                 INSTANCE = instance
                 return instance
-            }
-        }
-
-        fun seedDatabaseCallback(context: Context): Callback {
-            return object : Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
-                }
             }
         }
 

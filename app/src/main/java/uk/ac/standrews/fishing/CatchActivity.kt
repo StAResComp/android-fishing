@@ -1,12 +1,14 @@
 package uk.ac.standrews.fishing
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.TimePickerDialog
 import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,74 +42,157 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import uk.ac.standrews.fishing.fishing.Catch
 import uk.ac.standrews.fishing.fishing.FishingDao
-import java.text.SimpleDateFormat
+import uk.ac.standrews.fishing.fishing.LobsterCrabCatch
+import uk.ac.standrews.fishing.fishing.NephropsCatch
+import java.text.DateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.*
 import kotlin.math.floor
+
+val CATCH_TYPES = arrayOf("Nephrops", "Lobster/Crab")
+val NEPHROPS = CATCH_TYPES[0]
+val LOBSTER_CRAB = CATCH_TYPES[1]
 
 /**
  * Catch Activity. Where users toggle tracking and view/enter details of day's catch
  */
 class CatchActivity : ComponentActivity() {
 
-    private var trackingLocation by mutableStateOf(false)
     private lateinit var fishingDao: FishingDao
 
+    @SuppressLint("MissingPermission")
     private val requestPermission = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
-    ) { isGranted ->
+    ) {isGranted ->
         if (isGranted) {
-            this@CatchActivity.toggleTracking()
+            setContent {
+                MaterialTheme {
+                    CatchForm(this::insertCatch)
+                }
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         this.fishingDao = AppDatabase.getAppDataBase(this).fishingDao()
-        val app = this.application as FishingApplication
-        this.trackingLocation = app.trackingLocation
-        setContent {
-            MaterialTheme {
-                CatchForm()
+        requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+        if (
+            PermissionChecker.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PermissionChecker.PERMISSION_GRANTED
+        ) {
+            setContent {
+                MaterialTheme {
+                    CatchForm(this::insertCatch)
+                }
             }
         }
     }
 
-    private fun toggleTracking() {
-        val app = (this.application as FishingApplication)
-        val fineLocationPermission = ContextCompat.checkSelfPermission(
-            this@CatchActivity,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        )
-        if (fineLocationPermission == PackageManager.PERMISSION_GRANTED) {
-            app.toggleLocationTracking()
+    fun insertCatch (
+        catchType: String,
+        stringId: String,
+        lat: Double,
+        lon: Double,
+        timestamp: Date,
+        numSmall: Double,
+        numMedium: Double,
+        numLarge: Double,
+        wtReturned: Double,
+        numLobsterRetained: Int,
+        numLobsterReturned: Int,
+        numBrownRetained: Int,
+        numBrownReturned: Int,
+        numVelvetRetained: Int,
+        numVelvetReturned: Int
+    ) {
+        CoroutineScope(IO).launch {
+            val aCatch = Catch(
+                stringId = stringId, lat = lat, lon = lon, timestamp = timestamp
+            )
+            val catchId = this@CatchActivity.fishingDao.insertCatch(aCatch)
+            if (catchType == NEPHROPS) {
+                val nephropsCatch = NephropsCatch(
+                    catchId = catchId.toInt(),
+                    numSmallCases = numSmall,
+                    numMediumCases = numMedium,
+                    numLargeCases = numLarge,
+                    wtReturned = wtReturned
+                )
+                this@CatchActivity.fishingDao.insertNephropsCatch(nephropsCatch)
+            }
+            else if (catchType == LOBSTER_CRAB) {
+                val lobsterCrabCatch = LobsterCrabCatch(
+                    catchId = catchId.toInt(),
+                    numLobstersRetained = numLobsterRetained,
+                    numLobstersReturned = numLobsterReturned,
+                    numBrownRetained = numBrownRetained,
+                    numBrownReturned = numBrownReturned,
+                    numVelvetRetained = numVelvetRetained,
+                    numVelvetReturned = numVelvetReturned
+                )
+                this@CatchActivity.fishingDao.insertLobsterCrabCatch(lobsterCrabCatch)
+            }
+
         }
-        else {
-            requestPermission.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-        }
-        this.trackingLocation = app.trackingLocation
     }
-
-    private fun goToMap() {}
 }
-@OptIn(ExperimentalMaterial3Api::class)
-@Preview
-@Composable
-fun CatchForm() {
 
-    val CATCH_TYPES = arrayOf("Nephrops", "Lobster/Crab")
-    val NEPHROPS = CATCH_TYPES[0]
-    val LOBSTER_CRAB = CATCH_TYPES[1]
+@RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CatchForm(onSubmit: (
+        catchType: String,
+        stringId: String,
+        lat: Double,
+        lon: Double,
+        timestamp: Date,
+        numSmall: Double,
+        numMedium: Double,
+        numLarge: Double,
+        wtReturned: Double,
+        numLobsterRetained: Int,
+        numLobsterReturned: Int,
+        numBrownRetained: Int,
+        numBrownReturned: Int,
+        numVelvetRetained: Int,
+        numVelvetReturned: Int
+    ) -> Unit) {
+
+
+    val formatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.UK)
+
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val locationClient = remember {
+        LocationServices.getFusedLocationProviderClient(context)
+    }
+    var locationInfo by remember { mutableStateOf("") }
 
     var catchType by remember { mutableStateOf("Select catch type") }
     var stringId by remember { mutableStateOf("") }
+    var lat by remember { mutableStateOf(0.0) }
+    var lon by remember { mutableStateOf(0.0) }
     var latDeg by remember { mutableStateOf("0") }
     var latMin by remember { mutableStateOf("0") }
     var latSec by remember { mutableStateOf("0.0") }
     var lonDeg by remember { mutableStateOf("0") }
     var lonMin by remember { mutableStateOf("0") }
     var lonSec by remember { mutableStateOf("0.0") }
-    val formatter = SimpleDateFormat("HH:mm")
     val cal by remember { mutableStateOf(Calendar.getInstance()) }
     val now = cal.time
     var tmString by remember { mutableStateOf(formatter.format(now)) }
@@ -162,11 +248,7 @@ fun CatchForm() {
         OutlinedTextField(
             value = stringId,
             singleLine = true,
-            onValueChange = {
-                if (it.toIntOrNull() != null || it.trim() == "") {
-                    stringId = it
-                }
-            },
+            onValueChange = { stringId = it },
             label = { Text("String ID") }
         )
         Row (
@@ -183,9 +265,7 @@ fun CatchForm() {
                     OutlinedTextField(
                         value = latDeg,
                         onValueChange = {
-                            if (it.toIntOrNull() != null || it.trim() == "") {
-                                latDeg = it
-                            }
+                            if (chkNum(it)) { latDeg = it }
                         },
                         label = { Text("Deg")},
                         modifier = Modifier
@@ -196,9 +276,7 @@ fun CatchForm() {
                     OutlinedTextField(
                         value = latMin,
                         onValueChange = {
-                            if (it.toIntOrNull() != null || it.trim() == "") {
-                                latMin = it
-                            }
+                            if (chkNum(it)) { latMin = it }
                         },
                         label = { Text("Min")},
                         modifier = Modifier
@@ -209,13 +287,11 @@ fun CatchForm() {
                     OutlinedTextField(
                         value = latSec,
                         onValueChange = {
-                            if (it.toDoubleOrNull() != null || it.trim() == "") {
-                                latSec = it
-                            }
+                            if (chkNum(it, false)) { latSec = it }
                         },
                         label = { Text("Sec")},
                         modifier = Modifier
-                            .width(72.dp)
+                            .width(80.dp)
                             .padding(horizontal = 2.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                     )
@@ -227,9 +303,7 @@ fun CatchForm() {
                     OutlinedTextField(
                         value = lonDeg,
                         onValueChange = {
-                            if (it.toIntOrNull() != null || it.trim() == "") {
-                                lonDeg = it
-                            }
+                            if (chkNum(it)) { lonDeg = it }
                         },
                         label = { Text("Deg")},
                         modifier = Modifier
@@ -240,9 +314,7 @@ fun CatchForm() {
                     OutlinedTextField(
                         value = lonMin,
                         onValueChange = {
-                            if (it.toIntOrNull() != null || it.trim() == "") {
-                                lonMin = it
-                            }
+                            if (chkNum(it)) { lonMin = it }
                         },
                         label = { Text("Min")},
                         modifier = Modifier
@@ -253,13 +325,11 @@ fun CatchForm() {
                     OutlinedTextField(
                         value = lonSec,
                         onValueChange = {
-                            if (it.toDoubleOrNull() != null || it.trim() == "") {
-                                lonSec = it
-                            }
+                            if (chkNum(it, false)) { lonSec = it }
                         },
                         label = { Text("Sec")},
                         modifier = Modifier
-                            .width(72.dp)
+                            .width(80.dp)
                             .padding(horizontal = 2.dp),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
                     )
@@ -267,7 +337,26 @@ fun CatchForm() {
             }
             Column {
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {
+                        scope.launch(Dispatchers.IO) {
+                            val result = locationClient.getCurrentLocation(
+                                Priority.PRIORITY_HIGH_ACCURACY,
+                                CancellationTokenSource().token
+                            ).await()
+                            result?.let { fetchedLocation ->
+                                lat = fetchedLocation.latitude
+                                lon = fetchedLocation.longitude
+                                val latDegMinSec = coordsDecimaltoDegrees(lat)
+                                latDeg = latDegMinSec[0].toString()
+                                latMin = latDegMinSec[1].toString()
+                                latSec = String.format("%.2f", latDegMinSec[2])
+                                val lonDegMinSec = coordsDecimaltoDegrees(lon)
+                                lonDeg = lonDegMinSec[0].toString()
+                                lonMin = lonDegMinSec[1].toString()
+                                lonSec = String.format("%.2f", lonDegMinSec[2])
+                            }
+                        }
+                    },
                     modifier = Modifier.padding(horizontal = 2.dp)
                 ) {
                     Icon(painter = painterResource(id = R.drawable.near_me), contentDescription = "")
@@ -278,12 +367,12 @@ fun CatchForm() {
             verticalAlignment = Alignment.CenterVertically,
         ){
             val timePickerDialog = TimePickerDialog(
-                LocalContext.current,
+                context,
                 {_, hr: Int, mn: Int ->
                     cal.set(Calendar.HOUR_OF_DAY, hr)
                     cal.set(Calendar.MINUTE, mn)
                     tmString = formatter.format(cal.time)
-                }, cal[Calendar.HOUR_OF_DAY], cal[Calendar.MINUTE], true
+                }, cal[Calendar.HOUR_OF_DAY], cal[Calendar.MINUTE], false
             )
             OutlinedTextField(
                 value = tmString,
@@ -303,115 +392,146 @@ fun CatchForm() {
             }
         }
         if (catchType == NEPHROPS) {
-            OutlinedTextField(
-                value = numSmall,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toDoubleOrNull() != null || it.trim() == "") {
-                        numSmall = it
-                    }
-                },
-                label = { Text("Small cases") }
-            )
-            OutlinedTextField(
-                value = numMedium,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toDoubleOrNull() != null || it.trim() == "") {
-                        numMedium = it
-                    }
-                },
-                label = { Text("Medium cases") }
-            )
-            OutlinedTextField(
-                value = numLarge,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toDoubleOrNull() != null || it.trim() == "") {
-                        numLarge = it
-                    }
-                },
-                label = { Text("Large cases") }
-            )
+            Row {
+                OutlinedTextField(
+                    value = numSmall,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it, false)) { numSmall = it }
+                    },
+                    modifier = Modifier.width(144.dp),
+                    label = { Text("Small cases") }
+                )
+                OutlinedTextField(
+                    value = numMedium,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it, false)) { numMedium = it }
+                    },
+                    modifier = Modifier.width(144.dp),
+                    label = { Text("Medium cases") }
+                )
+                OutlinedTextField(
+                    value = numLarge,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it, false)) { numLarge = it }
+                    },
+                    modifier = Modifier.width(144.dp),
+                    label = { Text("Large cases") }
+                )
+            }
             OutlinedTextField(
                 value = wtReturned,
                 singleLine = true,
                 onValueChange = {
-                    if (it.toDoubleOrNull() != null || it.trim() == "") {
-                        wtReturned = it
-                    }
+                    if (chkNum(it, false)) { wtReturned = it }
                 },
                 label = { Text("Weight returned") },
                 suffix = { Text("kg") }
             )
         }
         if (catchType == LOBSTER_CRAB) {
-            OutlinedTextField(
-                value = numLobsterRetained,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toIntOrNull() != null || it.trim() == "") {
-                        numLobsterRetained = it
-                    }
-                },
-                label = { Text("Lobsters retained") }
-            )
-            OutlinedTextField(
-                value = numLobsterReturned,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toIntOrNull() != null || it.trim() == "") {
-                        numLobsterReturned = it
-                    }
-                },
-                label = { Text("Lobsters returned") }
-            )
-            OutlinedTextField(
-                value = numBrownRetained,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toIntOrNull() != null || it.trim() == "") {
-                        numBrownRetained = it
-                    }
-                },
-                label = { Text("Brown crabs retained") }
-            )
-            OutlinedTextField(
-                value = numBrownReturned,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toIntOrNull() != null || it.trim() == "") {
-                        numBrownReturned = it
-                    }
-                },
-                label = { Text("Brown crabs returned") }
-            )
-            OutlinedTextField(
-                value = numVelvetRetained,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toIntOrNull() != null || it.trim() == "") {
-                        numVelvetRetained = it
-                    }
-                },
-                label = { Text("Velvet crabs retained") }
-            )
-            OutlinedTextField(
-                value = numVelvetReturned,
-                singleLine = true,
-                onValueChange = {
-                    if (it.toIntOrNull() != null || it.trim() == "") {
-                        numVelvetReturned = it
-                    }
-                },
-                label = { Text("Velvet crabs returned") }
-            )
+            Row {
+                OutlinedTextField(
+                    value = numLobsterRetained,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it)) { numLobsterRetained = it }
+                    },
+                    label = { Text("Lobsters retained") }
+                )
+                OutlinedTextField(
+                    value = numLobsterReturned,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it)) { numLobsterReturned = it }
+                    },
+                    label = { Text("Lobsters returned") }
+                )
+            }
+            Row {
+                OutlinedTextField(
+                    value = numBrownRetained,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it)) { numBrownRetained = it }
+                    },
+                    label = { Text("Brown crabs retained") }
+                )
+                OutlinedTextField(
+                    value = numBrownReturned,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it)) { numBrownReturned = it }
+                    },
+                    label = { Text("Brown crabs returned") }
+                )
+            }
+            Row {
+                OutlinedTextField(
+                    value = numVelvetRetained,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it)) { numVelvetRetained = it }
+                    },
+                    label = { Text("Velvet crabs retained") }
+                )
+                OutlinedTextField(
+                    value = numVelvetReturned,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it)) { numVelvetReturned = it }
+                    },
+                    label = { Text("Velvet crabs returned") }
+                )
+
+            }
         }
-        Button(
-            onClick = {},
-        ) {
-            Text("Submit")
+        if (catchType == LOBSTER_CRAB || catchType == NEPHROPS) {
+            Button(
+                onClick = {
+                    lat = coordsDegreestoDecimal(
+                        latDeg.toInt(),
+                        latMin.toInt(),
+                        latSec.toDouble()
+                    )
+                    lon = coordsDegreestoDecimal(
+                        lonDeg.toInt(),
+                        lonMin.toInt(),
+                        lonSec.toDouble()
+                    )
+                    onSubmit(
+                        catchType,
+                        stringId,
+                        lat,
+                        lon,
+                        cal.time,
+                        numSmall.toDouble(),
+                        numMedium.toDouble(),
+                        numLarge.toDouble(),
+                        wtReturned.toDouble(),
+                        numLobsterRetained.toInt(),
+                        numLobsterReturned.toInt(),
+                        numBrownRetained.toInt(),
+                        numBrownReturned.toInt(),
+                        numVelvetRetained.toInt(),
+                        numVelvetReturned.toInt()
+                    )
+                },
+            ) {
+                Text("Submit")
+            }
         }
+    }
+}
+
+fun chkNum(numString: String, isInt: Boolean = true): Boolean {
+    if(isInt) {
+        return numString.toIntOrNull() != null || numString.trim() == ""
+    }
+    else {
+        return numString.toDoubleOrNull() != null || numString.trim() == ""
     }
 }
 
@@ -430,52 +550,6 @@ fun coordsDegreestoDecimal(
     return degrees + minutes / 60.0 + seconds / 3600.0
 }
 
-@Composable
-fun TrackSwitch(tracking: Boolean, toggleFun: () -> Unit) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(text = stringResource(R.string.tracking))
-        Spacer(modifier = Modifier.padding(start = 8.dp))
-        Switch(
-            checked = tracking,
-            onCheckedChange = { toggleFun() }
-        )
-    }
-}
-
-@Composable
-fun MapButton(mapFun: () -> Unit) {
-    Button(
-        onClick = mapFun
-    ) {
-        Text(text = stringResource(R.string.view_map))
-    }
-}
-
-@Composable
-fun TrackControls(
-    tracking: Boolean,
-    toggleFun: () -> Unit,
-    mapFun: () -> Unit
-) {
-    Column (
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ){
-        Row (){
-            Text(
-                text = "Location",
-                style = MaterialTheme.typography.headlineMedium)
-        }
-        Row {
-            TrackSwitch(tracking, toggleFun)
-            Spacer(modifier = Modifier.padding(start = 16.dp))
-            MapButton(mapFun)
-        }
-    }
-}
 
 
 
