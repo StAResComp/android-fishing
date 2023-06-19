@@ -60,8 +60,8 @@ data class NephropsCatch(
  *
  * @property id numeric id, autoincremented by the database
  * @property catchId the id of the corresponding Catch
- * @property numLobstersRetained the number of lobsters retained
- * @property numLobstersReturned the number of lobsters returned
+ * @property numLobsterRetained the number of lobsters retained
+ * @property numLobsterReturned the number of lobsters returned
  * @property numBrownRetained the number of brown crabs retained
  * @property numBrownReturned the number of brown crabs returned
  * @property numVelvetRetained the number of velvet crabs retained
@@ -80,12 +80,37 @@ data class NephropsCatch(
 data class LobsterCrabCatch(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "catch_id") var catchId: Int,
-    @ColumnInfo(name = "num_lobsters_retained") var numLobstersRetained: Int = 0,
-    @ColumnInfo(name = "num_lobsters_returned") var numLobstersReturned: Int = 0,
+    @ColumnInfo(name = "num_lobsters_retained") var numLobsterRetained: Int = 0,
+    @ColumnInfo(name = "num_lobsters_returned") var numLobsterReturned: Int = 0,
     @ColumnInfo(name = "num_brown_retained") var numBrownRetained: Int = 0,
     @ColumnInfo(name = "num_brown_returned") var numBrownReturned: Int = 0,
     @ColumnInfo(name = "num_velvet_retained") var numVelvetRetained: Int = 0,
     @ColumnInfo(name = "num_velvet_returned") var numVelvetReturned: Int = 0
+)
+
+/**
+ * Describes the detail of a lobster/crab catch
+ *
+ * @property id numeric id, autoincremented by the database
+ * @property catchId the id of the corresponding Catch
+ * @property numWrasseRetained the number of lobsters retained
+ * @property numWrasseReturned the number of lobsters returned
+ */
+@Entity(
+    tableName = "wrasse_catch",
+    foreignKeys = [
+        ForeignKey(
+            entity = Catch::class,
+            parentColumns = ["id"],
+            childColumns = ["catch_id"]
+        )
+    ],
+)
+data class WrasseCatch(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @ColumnInfo(name = "catch_id") var catchId: Int,
+    @ColumnInfo(name = "num_wrasse_retained") var numWrasseRetained: Int = 0,
+    @ColumnInfo(name = "num_wrasse_returned") var numWrasseReturned: Int = 0,
 )
 
 /**
@@ -107,6 +132,8 @@ data class LobsterCrabCatch(
  * @property numBrownReturned the number of brown crabs returned
  * @property numVelvetRetained the number of velvet crabs retained
  * @property numVelvetReturned the number of velvet crabs returned
+ * @property numWrasseRetained the number of velvet crabs retained
+ * @property numWrasseReturned the number of velvet crabs returned
  */
 data class FullCatch (
     val id: Int = 0,
@@ -124,5 +151,7 @@ data class FullCatch (
     val numBrownRetained: Int?,
     val numBrownReturned: Int?,
     val numVelvetRetained: Int?,
-    val numVelvetReturned: Int?
+    val numVelvetReturned: Int?,
+    val numWrasseRetained: Int?,
+    val numWrasseReturned: Int?
 )

@@ -15,9 +15,10 @@ import java.util.Date
     entities = [
         Catch::class,
         NephropsCatch::class,
-        LobsterCrabCatch::class
+        LobsterCrabCatch::class,
+        WrasseCatch::class
     ],
-    version = 9,
+    version = 10,
     exportSchema = false
 )
 @TypeConverters(DateTypeConverter::class)

@@ -15,6 +15,9 @@ import java.util.concurrent.Executors
  */
 class FishingApplication : Application() {
 
+    private val database by lazy { AppDatabase.getAppDataBase(this) }
+    val repository by lazy { CatchRepository(database.fishingDao()) }
+
     fun postData(day: Pair<Date, Date>): Boolean {
         var success = true
         Executors.newSingleThreadExecutor().execute {

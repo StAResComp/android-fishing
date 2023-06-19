@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
 /**
@@ -13,16 +14,19 @@ import java.util.Date
 interface FishingDao {
 
     @Insert
-    fun insertCatch(aCatch: Catch): Long
+    suspend fun insertCatch(aCatch: Catch): Long
 
     @Insert
-    fun insertNephropsCatch(nephropsCatch: NephropsCatch): Long
+    suspend fun insertNephropsCatch(nephropsCatch: NephropsCatch): Long
 
     @Insert
-    fun insertLobsterCrabCatch(lobsterCrabCatch: LobsterCrabCatch): Long
+    suspend fun insertLobsterCrabCatch(lobsterCrabCatch: LobsterCrabCatch): Long
+
+    @Insert
+    suspend fun insertWrasseCatch(wrasseCatch: WrasseCatch): Long
 
     @Query("SELECT * FROM catch ORDER BY timestamp ASC")
-    fun getCatches(): Array<Catch>
+    fun getCatches(): Flow<List<Catch>>
 
     @Query("""
         SELECT
@@ -41,15 +45,19 @@ interface FishingDao {
             l.num_brown_retained as numBrownRetained,
             l.num_brown_returned as numBrownReturned,
             l.num_velvet_retained as numVelvetRetained,
-            l.num_velvet_returned as numVelvetReturned
+            l.num_velvet_returned as numVelvetReturned,
+            w.num_wrasse_retained as numWrasseRetained,
+            w.num_wrasse_returned as numWrasseReturned
         FROM
             catch c
         LEFT OUTER JOIN
             nephrops_catch n ON c.id = n.catch_id
         LEFT OUTER JOIN
             lobster_crab_catch l ON c.id = l.catch_id
+        LEFT OUTER JOIN
+            wrasse_catch w ON c.id = w.catch_id
         ORDER BY
             c.timestamp
     """)
-    fun getFullCatches(): Array<FullCatch>
+    fun getFullCatches(): Flow<List<FullCatch>>
 }
