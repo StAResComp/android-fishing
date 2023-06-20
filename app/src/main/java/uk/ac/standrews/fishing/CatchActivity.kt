@@ -33,6 +33,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -176,6 +178,31 @@ fun CatchForm(onSubmit: (
     var numWrasseRetained by remember { mutableStateOf(TextFieldValue("0")) }
     var numWrasseReturned by remember { mutableStateOf(TextFieldValue("0")) }
 
+    var getCurrentLocation by remember { mutableStateOf(false) }
+
+    DisposableEffect(getCurrentLocation) {
+        scope.launch(Dispatchers.IO) {
+            val result = locationClient.getCurrentLocation(
+                Priority.PRIORITY_HIGH_ACCURACY,
+                CancellationTokenSource().token
+            ).await()
+            result?.let { fetchedLocation ->
+                lat = fetchedLocation.latitude
+                lon = fetchedLocation.longitude
+                val latDegMinSec = coordsDecimalToDegrees(lat)
+                latDeg = TextFieldValue(latDegMinSec[0].toString())
+                latMin = TextFieldValue(latDegMinSec[1].toString())
+                latSec = TextFieldValue(String.format("%.2f", latDegMinSec[2]))
+                val lonDegMinSec = coordsDecimalToDegrees(lon)
+                lonDeg = TextFieldValue(lonDegMinSec[0].toString())
+                lonMin = TextFieldValue(lonDegMinSec[1].toString())
+                lonSec = TextFieldValue(String.format("%.2f", lonDegMinSec[2]))
+            }
+        }
+        onDispose {
+            getCurrentLocation = false
+        }
+    }
 
     Column (
         modifier = Modifier.fillMaxWidth(),
@@ -406,24 +433,7 @@ fun CatchForm(onSubmit: (
             Column {
                 Button(
                     onClick = {
-                        scope.launch(Dispatchers.IO) {
-                            val result = locationClient.getCurrentLocation(
-                                Priority.PRIORITY_HIGH_ACCURACY,
-                                CancellationTokenSource().token
-                            ).await()
-                            result?.let { fetchedLocation ->
-                                lat = fetchedLocation.latitude
-                                lon = fetchedLocation.longitude
-                                val latDegMinSec = coordsDecimalToDegrees(lat)
-                                latDeg = TextFieldValue(latDegMinSec[0].toString())
-                                latMin = TextFieldValue(latDegMinSec[1].toString())
-                                latSec = TextFieldValue(String.format("%.2f", latDegMinSec[2]))
-                                val lonDegMinSec = coordsDecimalToDegrees(lon)
-                                lonDeg = TextFieldValue(lonDegMinSec[0].toString())
-                                lonMin = TextFieldValue(lonDegMinSec[1].toString())
-                                lonSec = TextFieldValue(String.format("%.2f", lonDegMinSec[2]))
-                            }
-                        }
+                        getCurrentLocation = true
                     },
                     modifier = Modifier.padding(horizontal = 2.dp)
                 ) {
@@ -469,11 +479,16 @@ fun CatchForm(onSubmit: (
                     onValueChange = {
                         if (chkNum(it.text, false)) { numSmall = it }
                     },
-                    modifier = Modifier.width(144.dp).onFocusChanged {
-                        if(!it.hasFocus && numSmall.text.trim().isEmpty()) {
-                            numSmall = numSmall.copy("0.0")
-                        }
-                    },
+                    modifier = Modifier
+                        .width(144.dp)
+                        .onFocusChanged {
+                            if (!it.hasFocus && numSmall.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numSmall = numSmall.copy("0.0")
+                            }
+                        },
                     label = { Text("Small cases") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -483,11 +498,16 @@ fun CatchForm(onSubmit: (
                     onValueChange = {
                         if (chkNum(it.text, false)) { numMedium = it }
                     },
-                    modifier = Modifier.width(144.dp).onFocusChanged {
-                        if(!it.hasFocus && numMedium.text.trim().isEmpty()) {
-                            numMedium = numMedium.copy("0.0")
-                        }
-                    },
+                    modifier = Modifier
+                        .width(144.dp)
+                        .onFocusChanged {
+                            if (!it.hasFocus && numMedium.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numMedium = numMedium.copy("0.0")
+                            }
+                        },
                     label = { Text("Medium cases") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -497,11 +517,16 @@ fun CatchForm(onSubmit: (
                     onValueChange = {
                         if (chkNum(it.text, false)) { numLarge = it }
                     },
-                    modifier = Modifier.width(144.dp).onFocusChanged {
-                        if(!it.hasFocus && numLarge.text.trim().isEmpty()) {
-                            numLarge = numLarge.copy("0.0")
-                        }
-                    },
+                    modifier = Modifier
+                        .width(144.dp)
+                        .onFocusChanged {
+                            if (!it.hasFocus && numLarge.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numLarge = numLarge.copy("0.0")
+                            }
+                        },
                     label = { Text("Large cases") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -691,16 +716,7 @@ fun CatchForm(onSubmit: (
                     )
                     catchType = "Select catch type"
                     stringId = TextFieldValue("")
-                    lat = 0.0
-                    lon = 0.0
-                    latDeg = TextFieldValue("0")
-                    latMin = TextFieldValue("0")
-                    latSec = TextFieldValue("0.0")
-                    latDir = "N"
-                    lonDeg = TextFieldValue("0")
-                    lonMin = TextFieldValue("0")
-                    lonSec = TextFieldValue("0.0")
-                    lonDir = "W"
+                    getCurrentLocation = true
                     cal = Calendar.getInstance()
                     now = cal.time
                     tmString = formatter.format(now)
@@ -734,7 +750,10 @@ fun chkNum(numString: String, isInt: Boolean = true): Boolean {
 }
 
 fun coordError(textValue: TextFieldValue, max: Int, isInt: Boolean = true): Boolean {
-    if (isInt) {
+    if (textValue.text.trim().isEmpty()) {
+       return true
+    }
+    else if (isInt) {
         return (
             !chkNum(textValue.text) ||
                 textValue.text.toInt() < 0 ||
