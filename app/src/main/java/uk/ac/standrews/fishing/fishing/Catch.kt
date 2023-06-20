@@ -80,8 +80,8 @@ data class NephropsCatch(
 data class LobsterCrabCatch(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "catch_id", index = true) var catchId: Int,
-    @ColumnInfo(name = "num_lobsters_retained") var numLobsterRetained: Int = 0,
-    @ColumnInfo(name = "num_lobsters_returned") var numLobsterReturned: Int = 0,
+    @ColumnInfo(name = "num_lobster_retained") var numLobsterRetained: Int = 0,
+    @ColumnInfo(name = "num_lobster_returned") var numLobsterReturned: Int = 0,
     @ColumnInfo(name = "num_brown_retained") var numBrownRetained: Int = 0,
     @ColumnInfo(name = "num_brown_returned") var numBrownReturned: Int = 0,
     @ColumnInfo(name = "num_velvet_retained") var numVelvetRetained: Int = 0,
@@ -126,8 +126,8 @@ data class WrasseCatch(
  * @property numMediumCases the number of "medium" nephrops cases
  * @property numLargeCases the number of "large" nephrops cases
  * @property wtReturned the weight of nephrops returned
- * @property numLobstersRetained the number of lobsters retained
- * @property numLobstersReturned the number of lobsters returned
+ * @property numlobsterRetained the number of lobsters retained
+ * @property numlobsterReturned the number of lobsters returned
  * @property numBrownRetained the number of brown crabs retained
  * @property numBrownReturned the number of brown crabs returned
  * @property numVelvetRetained the number of velvet crabs retained
@@ -142,16 +142,19 @@ data class FullCatch (
     val lon: Double,
     val timestamp: Date,
     val uploaded: Date? = null,
+    val nephropsId: Int?,
     val numSmallCases: Double?,
     val numMediumCases: Double?,
     val numLargeCases: Double?,
     val wtReturned: Double?,
-    val numLobstersRetained: Int?,
-    val numLobstersReturned: Int?,
+    val lobsterCrabId: Int?,
+    val numlobsterRetained: Int?,
+    val numlobsterReturned: Int?,
     val numBrownRetained: Int?,
     val numBrownReturned: Int?,
     val numVelvetRetained: Int?,
     val numVelvetReturned: Int?,
+    val wrasseId: Int?,
     val numWrasseRetained: Int?,
     val numWrasseReturned: Int?
 )

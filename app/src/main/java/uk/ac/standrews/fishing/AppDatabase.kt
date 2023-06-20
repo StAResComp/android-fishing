@@ -18,7 +18,7 @@ import java.util.Date
         LobsterCrabCatch::class,
         WrasseCatch::class
     ],
-    version = 11,
+    version = 12,
     exportSchema = false
 )
 @TypeConverters(DateTypeConverter::class)

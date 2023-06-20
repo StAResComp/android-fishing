@@ -159,9 +159,9 @@ fun CatchForm(onSubmit: (
     var lonDeg by remember { mutableStateOf(TextFieldValue("0")) }
     var lonMin by remember { mutableStateOf(TextFieldValue("0")) }
     var lonSec by remember { mutableStateOf(TextFieldValue("0.0")) }
-    var lonDir by remember { mutableStateOf("E") }
-    val cal by remember { mutableStateOf(Calendar.getInstance()) }
-    val now = cal.time
+    var lonDir by remember { mutableStateOf("W") }
+    var cal by remember { mutableStateOf(Calendar.getInstance()) }
+    var now = cal.time
     var tmString by remember { mutableStateOf(formatter.format(now)) }
     var numSmall by remember { mutableStateOf(TextFieldValue("0.0")) }
     var numMedium by remember { mutableStateOf(TextFieldValue("0.0")) }
@@ -689,6 +689,33 @@ fun CatchForm(onSubmit: (
                         numWrasseRetained.text.toInt(),
                         numWrasseReturned.text.toInt()
                     )
+                    catchType = "Select catch type"
+                    stringId = TextFieldValue("")
+                    lat = 0.0
+                    lon = 0.0
+                    latDeg = TextFieldValue("0")
+                    latMin = TextFieldValue("0")
+                    latSec = TextFieldValue("0.0")
+                    latDir = "N"
+                    lonDeg = TextFieldValue("0")
+                    lonMin = TextFieldValue("0")
+                    lonSec = TextFieldValue("0.0")
+                    lonDir = "W"
+                    cal = Calendar.getInstance()
+                    now = cal.time
+                    tmString = formatter.format(now)
+                    numSmall = TextFieldValue("0.0")
+                    numMedium = TextFieldValue("0.0")
+                    numLarge = TextFieldValue("0.0")
+                    wtReturned = TextFieldValue("0.0")
+                    numLobsterRetained = TextFieldValue("0")
+                    numLobsterReturned = TextFieldValue("0")
+                    numBrownRetained = TextFieldValue("0")
+                    numBrownReturned = TextFieldValue("0")
+                    numVelvetRetained = TextFieldValue("0")
+                    numVelvetReturned = TextFieldValue("0")
+                    numWrasseRetained = TextFieldValue("0")
+                    numWrasseReturned = TextFieldValue("0")
                 },
                 enabled = !stringIdError
             ) {
@@ -768,12 +795,7 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                                }
                            }
                            Divider()
-                           if (
-                               it.numSmallCases != null ||
-                               it.numMediumCases != null ||
-                               it.numLargeCases != null ||
-                               it.wtReturned != null
-                           ) {
+                           if (it.nephropsId != null) {
                                Row (
                                    verticalAlignment = Alignment.CenterVertically,
                                    horizontalArrangement = Arrangement.SpaceBetween,
@@ -801,14 +823,7 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                                    }
                                }
                            }
-                           else if (
-                               it.numLobstersRetained != null ||
-                               it.numLobstersReturned != null ||
-                               it.numBrownRetained != null ||
-                               it.numBrownReturned != null ||
-                               it.numVelvetRetained != null ||
-                               it.numVelvetReturned != null
-                           ) {
+                           else if (it.lobsterCrabId != null) {
                                Row (
                                    verticalAlignment = Alignment.CenterVertically,
                                    horizontalArrangement = Arrangement.SpaceBetween,
@@ -827,14 +842,40 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                                        .padding(4.dp)
                                ) {
                                    Column {
-                                       Text("Lobsters retained: ${it.numLobstersRetained}")
+                                       Text("Lobsters retained: ${it.numlobsterRetained}")
                                        Text("Brown crabs retained: ${it.numBrownRetained}")
                                        Text("Velvet crabs retained: ${it.numVelvetRetained}")
                                    }
                                    Column {
-                                       Text("Lobsters returned: ${it.numLobstersReturned}")
+                                       Text("Lobsters returned: ${it.numlobsterReturned}")
                                        Text("Brown crabs returned: ${it.numBrownReturned}")
                                        Text("Velvet crabs returned: ${it.numVelvetReturned}")
+                                   }
+                               }
+                           }
+                           else if (it.wrasseId != null) {
+                               Row (
+                                   verticalAlignment = Alignment.CenterVertically,
+                                   horizontalArrangement = Arrangement.SpaceBetween,
+                                   modifier = Modifier
+                                       .fillMaxWidth()
+                                       .padding(4.dp)
+                               ) {
+                                   Text("Wrasse")
+                                   Text("String: ${it.stringNum}")
+                               }
+                               Row (
+                                   verticalAlignment = Alignment.CenterVertically,
+                                   horizontalArrangement = Arrangement.SpaceBetween,
+                                   modifier = Modifier
+                                       .fillMaxWidth()
+                                       .padding(4.dp)
+                               ) {
+                                   Column {
+                                       Text("Wrasse retained: ${it.numWrasseRetained}")
+                                   }
+                                   Column {
+                                       Text("Wrasse returned: ${it.numWrasseReturned}")
                                    }
                                }
                            }
