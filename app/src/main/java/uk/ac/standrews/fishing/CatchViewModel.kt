@@ -10,6 +10,7 @@ import uk.ac.standrews.fishing.fishing.Catch
 import uk.ac.standrews.fishing.fishing.FullCatch
 import uk.ac.standrews.fishing.fishing.LobsterCrabCatch
 import uk.ac.standrews.fishing.fishing.NephropsCatch
+import uk.ac.standrews.fishing.fishing.WrasseCatch
 import java.util.Date
 
 class CatchViewModel (private val repository: CatchRepository): ViewModel() {
@@ -43,7 +44,9 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
         numBrownRetained: Int,
         numBrownReturned: Int,
         numVelvetRetained: Int,
-        numVelvetReturned: Int
+        numVelvetReturned: Int,
+        numWrasseRetained: Int,
+        numWrasseReturned: Int,
     ) = viewModelScope.launch {
         val aCatch = Catch(
             stringId = stringId, lat = lat, lon = lon, timestamp = timestamp
@@ -70,6 +73,14 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
                 numVelvetReturned = numVelvetReturned
             )
             repository.insertLobsterCrabCatch(lobsterCrabCatch)
+        }
+        else if (catchType == WRASSE) {
+            val wrasseCatch = WrasseCatch(
+                catchId = catchId.toInt(),
+                numWrasseRetained = numWrasseRetained,
+                numWrasseReturned = numWrasseReturned
+            )
+            repository.insertWrasseCatch(wrasseCatch)
         }
     }
 }

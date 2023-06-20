@@ -33,7 +33,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +45,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -64,9 +62,10 @@ import java.util.*
 import kotlin.math.abs
 import kotlin.math.floor
 
-val CATCH_TYPES = arrayOf("Nephrops", "Lobster/Crab")
+val CATCH_TYPES = arrayOf("Nephrops", "Lobster/Crab", "Wrasse")
 val NEPHROPS = CATCH_TYPES[0]
 val LOBSTER_CRAB = CATCH_TYPES[1]
+val WRASSE = CATCH_TYPES[2]
 
 /**
  * Catch Activity. Where users toggle tracking and view/enter details of day's catch
@@ -132,7 +131,9 @@ fun CatchForm(onSubmit: (
         numBrownRetained: Int,
         numBrownReturned: Int,
         numVelvetRetained: Int,
-        numVelvetReturned: Int
+        numVelvetReturned: Int,
+        numWrasseRetained: Int,
+        numWrasseReturned: Int
     ) -> Unit) {
 
 
@@ -172,6 +173,8 @@ fun CatchForm(onSubmit: (
     var numBrownReturned by remember { mutableStateOf(TextFieldValue("0")) }
     var numVelvetRetained by remember { mutableStateOf(TextFieldValue("0")) }
     var numVelvetReturned by remember { mutableStateOf(TextFieldValue("0")) }
+    var numWrasseRetained by remember { mutableStateOf(TextFieldValue("0")) }
+    var numWrasseReturned by remember { mutableStateOf(TextFieldValue("0")) }
 
 
     Column (
@@ -519,7 +522,7 @@ fun CatchForm(onSubmit: (
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
         }
-        if (catchType == LOBSTER_CRAB) {
+        else if (catchType == LOBSTER_CRAB) {
             Row {
                 OutlinedTextField(
                     value = numLobsterRetained,
@@ -612,7 +615,47 @@ fun CatchForm(onSubmit: (
 
             }
         }
-        if (catchType == LOBSTER_CRAB || catchType == NEPHROPS) {
+        else if (catchType == WRASSE) {
+            Row {
+                OutlinedTextField(
+                    value = numWrasseRetained,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it.text)) {
+                            numWrasseRetained = it
+                        }
+                    },
+                    modifier = Modifier.onFocusChanged {
+                        if (!it.hasFocus && numWrasseRetained.text.trim()
+                                .isEmpty()
+                        ) {
+                            numWrasseRetained = numWrasseRetained.copy("0.0")
+                        }
+                    },
+                    label = { Text("Wrasse retained") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+                OutlinedTextField(
+                    value = numWrasseReturned,
+                    singleLine = true,
+                    onValueChange = {
+                        if (chkNum(it.text)) {
+                            numWrasseReturned = it
+                        }
+                    },
+                    modifier = Modifier.onFocusChanged {
+                        if (!it.hasFocus && numWrasseReturned.text.trim()
+                                .isEmpty()
+                        ) {
+                            numWrasseReturned = numWrasseReturned.copy("0.0")
+                        }
+                    },
+                    label = { Text("Wrasse returned") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                )
+            }
+        }
+        if (catchType == LOBSTER_CRAB || catchType == NEPHROPS || catchType == WRASSE) {
             Button(
                 onClick = {
                     lat = coordsDegreesToDecimal(
@@ -642,9 +685,12 @@ fun CatchForm(onSubmit: (
                         numBrownRetained.text.toInt(),
                         numBrownReturned.text.toInt(),
                         numVelvetRetained.text.toInt(),
-                        numVelvetReturned.text.toInt()
+                        numVelvetReturned.text.toInt(),
+                        numWrasseRetained.text.toInt(),
+                        numWrasseReturned.text.toInt()
                     )
                 },
+                enabled = !stringIdError
             ) {
                 Text("Submit")
             }

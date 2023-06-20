@@ -48,7 +48,7 @@ data class Catch(
 )
 data class NephropsCatch(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "catch_id") var catchId: Int,
+    @ColumnInfo(name = "catch_id", index = true) var catchId: Int,
     @ColumnInfo(name = "num_small_cases") var numSmallCases: Double = 0.0,
     @ColumnInfo(name = "num_medium_cases") var numMediumCases: Double = 0.0,
     @ColumnInfo(name = "num_large_cases") var numLargeCases: Double = 0.0,
@@ -79,7 +79,7 @@ data class NephropsCatch(
 )
 data class LobsterCrabCatch(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "catch_id") var catchId: Int,
+    @ColumnInfo(name = "catch_id", index = true) var catchId: Int,
     @ColumnInfo(name = "num_lobsters_retained") var numLobsterRetained: Int = 0,
     @ColumnInfo(name = "num_lobsters_returned") var numLobsterReturned: Int = 0,
     @ColumnInfo(name = "num_brown_retained") var numBrownRetained: Int = 0,
@@ -108,7 +108,7 @@ data class LobsterCrabCatch(
 )
 data class WrasseCatch(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    @ColumnInfo(name = "catch_id") var catchId: Int,
+    @ColumnInfo(name = "catch_id", index = true) var catchId: Int,
     @ColumnInfo(name = "num_wrasse_retained") var numWrasseRetained: Int = 0,
     @ColumnInfo(name = "num_wrasse_returned") var numWrasseReturned: Int = 0,
 )

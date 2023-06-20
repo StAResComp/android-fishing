@@ -6,6 +6,7 @@ import uk.ac.standrews.fishing.fishing.FishingDao
 import uk.ac.standrews.fishing.fishing.FullCatch
 import uk.ac.standrews.fishing.fishing.LobsterCrabCatch
 import uk.ac.standrews.fishing.fishing.NephropsCatch
+import uk.ac.standrews.fishing.fishing.WrasseCatch
 
 class CatchRepository(private val fishingDao: FishingDao) {
 
@@ -23,5 +24,7 @@ class CatchRepository(private val fishingDao: FishingDao) {
         fishingDao.insertLobsterCrabCatch(lobsterCrabCatch)
     }
 
-
+    suspend fun insertWrasseCatch(wrasseCatch: WrasseCatch) {
+        fishingDao.insertWrasseCatch(wrasseCatch)
+    }
 }
