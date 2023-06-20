@@ -1,5 +1,6 @@
 package uk.ac.standrews.fishing
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,23 +12,15 @@ import uk.ac.standrews.fishing.fishing.FullCatch
 import uk.ac.standrews.fishing.fishing.LobsterCrabCatch
 import uk.ac.standrews.fishing.fishing.NephropsCatch
 import uk.ac.standrews.fishing.fishing.WrasseCatch
+import uk.ac.standrews.fishing.network.CatchesToPost
+import uk.ac.standrews.fishing.network.FishingApi
+import java.net.SocketTimeoutException
+import java.util.Calendar
 import java.util.Date
 
 class CatchViewModel (private val repository: CatchRepository): ViewModel() {
 
     val allFullCatches: LiveData<List<FullCatch>> = repository.allFullCatches.asLiveData()
-
-    fun insertCatch(aCatch: Catch) = viewModelScope.launch {
-        repository.insertCatch(aCatch)
-    }
-
-    fun insertNephropsCatch(nephropsCatch: NephropsCatch) = viewModelScope.launch {
-        repository.insertNephropsCatch(nephropsCatch)
-    }
-
-    fun insertLobsterCrabCatch(lobsterCrabCatch: LobsterCrabCatch) = viewModelScope.launch {
-        repository.insertLobsterCrabCatch(lobsterCrabCatch)
-    }
 
     fun insertFullCatch(
         catchType: String,
@@ -81,6 +74,28 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
                 numWrasseReturned = numWrasseReturned
             )
             repository.insertWrasseCatch(wrasseCatch)
+        }
+        this@CatchViewModel.postCatches()
+    }
+
+    private suspend fun postCatches() {
+
+        val catchesToPost = CatchesToPost("DEVICE_1", this@CatchViewModel.repository.unsubmittedFullCatches())
+        val ids = catchesToPost.getCatchIds()
+        try {
+            val submissionResult = FishingApi.retrofitService.postCatches(catchesToPost)
+            Log.d("API",submissionResult)
+            if (false) { //Needs to check submissionResult
+               ids.forEach() {
+                   val aCatch = this@CatchViewModel.repository.getCatch(it)
+                   val cal = Calendar.getInstance()
+                   aCatch.uploaded = cal.time
+                   this@CatchViewModel.repository.updateCatch(aCatch)
+               }
+            }
+        }
+        catch (e: SocketTimeoutException) {
+            Log.e("API", "Connection timed out")
         }
     }
 }

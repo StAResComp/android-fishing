@@ -12,6 +12,10 @@ class CatchRepository(private val fishingDao: FishingDao) {
 
     val allFullCatches: Flow<List<FullCatch>> = fishingDao.getFullCatches()
 
+    suspend fun unsubmittedFullCatches(): List<FullCatch> {
+       return fishingDao.getUnsubmittedFullCatches()
+    }
+
     suspend fun insertCatch(aCatch: Catch): Long {
         return fishingDao.insertCatch(aCatch)
     }
@@ -26,5 +30,17 @@ class CatchRepository(private val fishingDao: FishingDao) {
 
     suspend fun insertWrasseCatch(wrasseCatch: WrasseCatch) {
         fishingDao.insertWrasseCatch(wrasseCatch)
+    }
+
+    suspend fun getNumUnsubmittedCatches(): Int {
+        return fishingDao.getNumUnsubmittedCatches()
+    }
+
+    suspend fun getCatch(id: Int): Catch {
+        return fishingDao.getCatch(id)
+    }
+
+    suspend fun updateCatch(aCatch: Catch) {
+        fishingDao.updateCatch(aCatch)
     }
 }
