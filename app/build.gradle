@@ -62,15 +62,6 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:1.4.3"
     kapt 'androidx.room:room-compiler:2.5.1'
     // Testing-only dependencies
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    androidTestImplementation 'androidx.test.ext:junit:' + rootProject.extJUnitVersion
-    androidTestImplementation 'androidx.test.ext:junit-ktx:' + rootProject.extJUnitVersion
-    androidTestImplementation 'androidx.test:core:' + rootProject.coreVersion
-    androidTestImplementation 'androidx.test:core-ktx:' + rootProject.coreVersion
-    androidTestImplementation 'androidx.test:runner:' + rootProject.runnerVersion
-    androidTestImplementation 'androidx.test:rules:' + rootProject.rulesVersion
-    androidTestImplementation 'androidx.test.espresso:espresso-core:' + rootProject.espressoVersion
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
