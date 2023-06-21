@@ -1,6 +1,7 @@
 package uk.ac.standrews.fishing
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -76,11 +77,10 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
             )
             repository.insertWrasseCatch(wrasseCatch)
         }
-        this@CatchViewModel.postCatches()
+        //this@CatchViewModel.postCatches()
     }
-    fun postCatches() = viewModelScope.launch {
-
-        val catchesToPost = CatchesToPost("DEVICE_1", this@CatchViewModel.repository.unsubmittedFullCatches())
+    fun postCatches(deviceId : String) = viewModelScope.launch {
+        val catchesToPost = CatchesToPost(deviceId, this@CatchViewModel.repository.unsubmittedFullCatches())
         val ids = catchesToPost.getCatchIds()
         try {
             val submissionResult = FishingApi.retrofitService.postCatches(catchesToPost)

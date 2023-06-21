@@ -104,14 +104,17 @@ class CatchActivity : ComponentActivity() {
                 Manifest.permission.ACCESS_FINE_LOCATION
             ) == PermissionChecker.PERMISSION_GRANTED
         ) {
-            MaterialTheme {
+            val deviceId = (this@CatchActivity.application as FishingApplication).getId()
+                MaterialTheme {
                 Column(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    Text("Device ID: $deviceId")
                     SendCatches(
                         this@CatchActivity.catchViewModel.numUnsubmittedCatches,
-                        this@CatchActivity.catchViewModel::postCatches
+                        this@CatchActivity.catchViewModel::postCatches,
+                        deviceId
                     )
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
                     CatchForm(this@CatchActivity.catchViewModel::insertFullCatch)
@@ -1018,22 +1021,23 @@ fun coordError(textValue: TextFieldValue, max: Int, isInt: Boolean = true): Bool
 }
 
 @Composable
-fun SendCatches(numCatches: LiveData<Int>, postCatches: () -> Unit) {
-    Column (
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            val nc = numCatches.observeAsState()
-            nc.let {
-                if (it.value != null && (it.value as Int) > 0) {
+fun SendCatches(numCatches: LiveData<Int>, postCatches: (deviceId: String) -> Unit, deviceId: String) {
+    val nc = numCatches.observeAsState()
+    nc.let {
+        if (it.value != null && (it.value as Int) > 0) {
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(text = "${it.value} catches to be uploaded")
                     Spacer(modifier = Modifier.width(4.dp))
                     Button(
                         onClick = {
-                            postCatches()
+                            postCatches(deviceId)
                         }
                     ) {
                         Text("Upload now")
@@ -1041,7 +1045,6 @@ fun SendCatches(numCatches: LiveData<Int>, postCatches: () -> Unit) {
                 }
             }
         }
-
     }
 }
 
