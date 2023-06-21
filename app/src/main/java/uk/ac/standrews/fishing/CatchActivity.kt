@@ -12,6 +12,7 @@ import androidx.annotation.RequiresPermission
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -34,7 +35,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +63,7 @@ import java.text.DateFormat
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.floor
+import kotlin.reflect.KSuspendFunction0
 
 val CATCH_TYPES = arrayOf("Nephrops", "Lobster/Crab", "Wrasse")
 val NEPHROPS = CATCH_TYPES[0]
@@ -106,7 +107,13 @@ class CatchActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    SendCatches(
+                        this@CatchActivity.catchViewModel.numUnsubmittedCatches,
+                        this@CatchActivity.catchViewModel::postCatches
+                    )
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                     CatchForm(this@CatchActivity.catchViewModel::insertFullCatch)
+                    Divider(modifier = Modifier.padding(vertical = 8.dp))
                     CatchList(this@CatchActivity.catchViewModel.allFullCatches)
                 }
             }
@@ -766,6 +773,34 @@ fun coordError(textValue: TextFieldValue, max: Int, isInt: Boolean = true): Bool
                 textValue.text.toDouble() < 0 ||
                 textValue.text.toDouble() >= max
             )
+    }
+}
+
+@Composable
+fun SendCatches(numCatches: LiveData<Int>, postCatches: () -> Unit) {
+    Column (
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row (
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val nc = numCatches.observeAsState()
+            nc.let {
+                if (it.value != null && (it.value as Int) > 0) {
+                    Text(text = "${it.value} catches to be uploaded")
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Button(
+                        onClick = {
+                            postCatches()
+                        }
+                    ) {
+                        Text("Upload now")
+                    }
+                }
+            }
+        }
+
     }
 }
 

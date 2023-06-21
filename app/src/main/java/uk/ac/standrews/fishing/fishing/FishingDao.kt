@@ -107,7 +107,7 @@ interface FishingDao {
     suspend fun getUnsubmittedFullCatches(): List<FullCatch>
 
     @Query("SELECT COUNT(*) FROM catch WHERE uploaded IS NULL")
-    suspend fun getNumUnsubmittedCatches(): Int
+    fun getNumUnsubmittedCatches(): Flow<Int>
 
     @Update
     suspend fun updateCatch(aCatch: Catch)

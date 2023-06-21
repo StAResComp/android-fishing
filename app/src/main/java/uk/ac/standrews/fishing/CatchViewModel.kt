@@ -21,6 +21,7 @@ import java.util.Date
 class CatchViewModel (private val repository: CatchRepository): ViewModel() {
 
     val allFullCatches: LiveData<List<FullCatch>> = repository.allFullCatches.asLiveData()
+    val numUnsubmittedCatches: LiveData<Int> = repository.numUnsubmittedCatches.asLiveData()
 
     fun insertFullCatch(
         catchType: String,
@@ -77,8 +78,7 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
         }
         this@CatchViewModel.postCatches()
     }
-
-    private suspend fun postCatches() {
+    fun postCatches() = viewModelScope.launch {
 
         val catchesToPost = CatchesToPost("DEVICE_1", this@CatchViewModel.repository.unsubmittedFullCatches())
         val ids = catchesToPost.getCatchIds()

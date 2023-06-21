@@ -11,6 +11,7 @@ import uk.ac.standrews.fishing.fishing.WrasseCatch
 class CatchRepository(private val fishingDao: FishingDao) {
 
     val allFullCatches: Flow<List<FullCatch>> = fishingDao.getFullCatches()
+    val numUnsubmittedCatches: Flow<Int> = fishingDao.getNumUnsubmittedCatches()
 
     suspend fun unsubmittedFullCatches(): List<FullCatch> {
        return fishingDao.getUnsubmittedFullCatches()
@@ -30,10 +31,6 @@ class CatchRepository(private val fishingDao: FishingDao) {
 
     suspend fun insertWrasseCatch(wrasseCatch: WrasseCatch) {
         fishingDao.insertWrasseCatch(wrasseCatch)
-    }
-
-    suspend fun getNumUnsubmittedCatches(): Int {
-        return fishingDao.getNumUnsubmittedCatches()
     }
 
     suspend fun getCatch(id: Int): Catch {
