@@ -574,6 +574,15 @@ fun CatchForm(onSubmit: (
             ) {
                 Icon(painter = painterResource(id = R.drawable.history), contentDescription = "")
             }
+            Button(
+                onClick = {
+                    cal = Calendar.getInstance()
+                    now = cal.time
+                    tmString = formatter.format(now)
+                },
+            ) {
+                Text("Now")
+            }
         }
         if (catchType == NEPHROPS) {
             Row {
