@@ -718,7 +718,9 @@ fun CatchForm(onSubmit: (
                     onValueChange = {
                         if (chkNum(it.text)) { numLobsterRetained = it }
                     },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -744,7 +746,9 @@ fun CatchForm(onSubmit: (
                     onValueChange = {
                         if (chkNum(it.text)) { numLobsterReturned = it }
                     },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -772,7 +776,9 @@ fun CatchForm(onSubmit: (
                     onValueChange = {
                         if (chkNum(it.text)) { numBrownRetained = it }
                     },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -799,7 +805,9 @@ fun CatchForm(onSubmit: (
                         if (chkNum(it.text)) { numBrownReturned = it }
                     },
                     label = { Text("Brown crabs returned") },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -827,7 +835,9 @@ fun CatchForm(onSubmit: (
                         if (chkNum(it.text)) { numVelvetRetained = it }
                     },
                     label = { Text("Velvet crabs retained") },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -853,7 +863,9 @@ fun CatchForm(onSubmit: (
                         if (chkNum(it.text)) { numVelvetReturned = it }
                     },
                     label = { Text("Velvet crabs returned") },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -885,7 +897,9 @@ fun CatchForm(onSubmit: (
                             numWrasseRetained = it
                         }
                     },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -915,7 +929,9 @@ fun CatchForm(onSubmit: (
                             numWrasseReturned = it
                         }
                     },
-                    modifier = Modifier.onFocusChanged {
+                    modifier = Modifier
+                        .padding(horizontal = 2.dp)
+                        .onFocusChanged {
                         if (it.isFocused) {
                             scope.launch {
                                 delay(5)
@@ -994,7 +1010,7 @@ fun CatchForm(onSubmit: (
                 },
                 enabled = !stringIdError
             ) {
-                Text("Submit")
+                Text("Save")
             }
         }
     }
@@ -1064,6 +1080,7 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
     ){
         Text("Previous Catches", style = MaterialTheme.typography.headlineMedium)
         val catchesState = catches.observeAsState()
+        val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK)
         catchesState.value?.let {
             LazyColumn {
                 items(it.reversed()) {
@@ -1084,7 +1101,6 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                                    .fillMaxWidth()
                                    .padding(4.dp)
                            ){
-                               val formatter = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.UK)
                                Text(
                                    text = formatter.format(it.timestamp),
                                    style = MaterialTheme.typography.headlineSmall
@@ -1196,6 +1212,15 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                                    Text("Unknown")
                                    Text("String: ${it.stringNum}")
                                }
+                           }
+                           Divider()
+                           Row (
+                               modifier = Modifier.fillMaxWidth().padding(4.dp)
+                           ) {
+                               Text(
+                                   if (it.uploaded == null) "Not yet uploaded"
+                                   else "Uploaded ${formatter.format(it.uploaded)}"
+                               )
                            }
                        }
                     }
