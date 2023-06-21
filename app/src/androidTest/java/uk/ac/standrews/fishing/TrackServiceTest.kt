@@ -13,6 +13,7 @@ import org.junit.runner.RunWith
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
+import uk.ac.standrews.fishing.db.AppDatabase
 import java.util.*
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit

@@ -60,12 +60,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import uk.ac.standrews.fishing.fishing.FullCatch
+import uk.ac.standrews.fishing.db.FullCatch
 import java.text.DateFormat
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.floor
-import kotlin.reflect.KSuspendFunction0
 
 val CATCH_TYPES = arrayOf("Nephrops", "Lobster/Crab", "Wrasse")
 val NEPHROPS = CATCH_TYPES[0]

@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
 import retrofit2.http.POST
-import uk.ac.standrews.fishing.fishing.FullCatch
+import uk.ac.standrews.fishing.db.FullCatch
 
 private const val BASE_URL = "https://fishing.st-andrews.ac.uk"
 private val retrofit = Retrofit.Builder()

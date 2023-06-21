@@ -1,12 +1,10 @@
-package uk.ac.standrews.fishing.fishing
+package uk.ac.standrews.fishing.db
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 /**
  * Database Access Object for working with fishing activity data

@@ -2,6 +2,8 @@ package uk.ac.standrews.fishing
 
 import android.app.Application
 import android.provider.Settings.Secure
+import uk.ac.standrews.fishing.db.AppDatabase
+import uk.ac.standrews.fishing.db.CatchRepository
 
 /**
  * Extends [android.app.Application] to handle tracking independently of any activity

@@ -1,9 +1,8 @@
-package uk.ac.standrews.fishing
+package uk.ac.standrews.fishing.db
 
 import androidx.room.*
 import android.content.Context
-import androidx.sqlite.db.SupportSQLiteDatabase
-import uk.ac.standrews.fishing.fishing.*
+import uk.ac.standrews.fishing.db.*
 import java.util.Date
 
 /**

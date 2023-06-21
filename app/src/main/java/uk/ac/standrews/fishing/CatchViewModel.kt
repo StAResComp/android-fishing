@@ -1,18 +1,18 @@
 package uk.ac.standrews.fishing
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import uk.ac.standrews.fishing.fishing.Catch
-import uk.ac.standrews.fishing.fishing.FullCatch
-import uk.ac.standrews.fishing.fishing.LobsterCrabCatch
-import uk.ac.standrews.fishing.fishing.NephropsCatch
-import uk.ac.standrews.fishing.fishing.WrasseCatch
+import uk.ac.standrews.fishing.db.Catch
+import uk.ac.standrews.fishing.db.CatchRepository
+import uk.ac.standrews.fishing.db.FullCatch
+import uk.ac.standrews.fishing.db.LobsterCrabCatch
+import uk.ac.standrews.fishing.db.NephropsCatch
+import uk.ac.standrews.fishing.db.WrasseCatch
 import uk.ac.standrews.fishing.network.CatchesToPost
 import uk.ac.standrews.fishing.network.FishingApi
 import java.net.SocketTimeoutException

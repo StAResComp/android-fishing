@@ -1,12 +1,12 @@
-package uk.ac.standrews.fishing
+package uk.ac.standrews.fishing.db
 
 import kotlinx.coroutines.flow.Flow
-import uk.ac.standrews.fishing.fishing.Catch
-import uk.ac.standrews.fishing.fishing.FishingDao
-import uk.ac.standrews.fishing.fishing.FullCatch
-import uk.ac.standrews.fishing.fishing.LobsterCrabCatch
-import uk.ac.standrews.fishing.fishing.NephropsCatch
-import uk.ac.standrews.fishing.fishing.WrasseCatch
+import uk.ac.standrews.fishing.db.Catch
+import uk.ac.standrews.fishing.db.FishingDao
+import uk.ac.standrews.fishing.db.FullCatch
+import uk.ac.standrews.fishing.db.LobsterCrabCatch
+import uk.ac.standrews.fishing.db.NephropsCatch
+import uk.ac.standrews.fishing.db.WrasseCatch
 
 class CatchRepository(private val fishingDao: FishingDao) {
 
