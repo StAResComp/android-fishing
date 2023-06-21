@@ -47,6 +47,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -56,6 +57,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import uk.ac.standrews.fishing.fishing.FullCatch
@@ -268,6 +270,17 @@ fun CatchForm(onSubmit: (
                 if (stringIdError)
                     Icon(Icons.Filled.Warning,"error", tint = MaterialTheme.colorScheme.error)
             },
+            modifier = Modifier.onFocusChanged {
+                if (it.isFocused) {
+                    scope.launch {
+                        delay(5)
+                        val text = stringId.text
+                        stringId = stringId.copy(
+                            selection = TextRange(0, text.length)
+                        )
+                    }
+                }
+             }
         )
         Row (
             verticalAlignment = Alignment.CenterVertically
@@ -288,10 +301,24 @@ fun CatchForm(onSubmit: (
                         label = { Text("Deg")},
                         modifier = Modifier
                             .width(72.dp)
-                            .padding(horizontal = 2.dp),
+                            .padding(horizontal = 2.dp)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    scope.launch {
+                                        delay(5)
+                                        val text = latDeg.text
+                                        latDeg = latDeg.copy(
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
+                                        )
+                                    }
+                                }
+                            },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
-                        isError = coordError(latDeg, 90)
+                        isError = coordError(latDeg, 90),
                     )
                     OutlinedTextField(
                         value = latMin,
@@ -301,7 +328,21 @@ fun CatchForm(onSubmit: (
                         label = { Text("Min")},
                         modifier = Modifier
                             .width(72.dp)
-                            .padding(horizontal = 2.dp),
+                            .padding(horizontal = 2.dp)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    scope.launch {
+                                        delay(5)
+                                        val text = latMin.text
+                                        latMin = latMin.copy(
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
+                                        )
+                                    }
+                                }
+                            },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         isError = coordError(latMin, 60)
@@ -313,8 +354,22 @@ fun CatchForm(onSubmit: (
                         },
                         label = { Text("Sec")},
                         modifier = Modifier
-                            .width(80.dp)
-                            .padding(horizontal = 2.dp),
+                            .width(96.dp)
+                            .padding(horizontal = 2.dp)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    scope.launch {
+                                        delay(5)
+                                        val text = latSec.text
+                                        latSec = latSec.copy(
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
+                                        )
+                                    }
+                                }
+                            },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true,
                         isError = coordError(latSec, 60, false)
@@ -336,7 +391,7 @@ fun CatchForm(onSubmit: (
                             },
                            modifier = Modifier
                                .menuAnchor()
-                               .width(80.dp),
+                               .width(88.dp),
                             label = { Text("Dir") }
                         )
                         ExposedDropdownMenu(
@@ -368,7 +423,18 @@ fun CatchForm(onSubmit: (
                         label = { Text("Deg")},
                         modifier = Modifier
                             .width(72.dp)
-                            .padding(horizontal = 2.dp),
+                            .padding(horizontal = 2.dp)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    scope.launch {
+                                        delay(5)
+                                        val text = lonDeg.text
+                                        lonDeg = lonDeg.copy(
+                                            selection = TextRange(0, text.length)
+                                        )
+                                    }
+                                }
+                            },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         isError = coordError(lonDeg, 180)
@@ -381,7 +447,21 @@ fun CatchForm(onSubmit: (
                         label = { Text("Min")},
                         modifier = Modifier
                             .width(72.dp)
-                            .padding(horizontal = 2.dp),
+                            .padding(horizontal = 2.dp)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    scope.launch {
+                                        delay(5)
+                                        val text = lonMin.text
+                                        lonMin = lonMin.copy(
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
+                                        )
+                                    }
+                                }
+                            },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
                         isError = coordError(lonMin, 60)
@@ -393,8 +473,22 @@ fun CatchForm(onSubmit: (
                         },
                         label = { Text("Sec")},
                         modifier = Modifier
-                            .width(80.dp)
-                            .padding(horizontal = 2.dp),
+                            .width(96.dp)
+                            .padding(horizontal = 2.dp)
+                            .onFocusChanged {
+                                if (it.isFocused) {
+                                    scope.launch {
+                                        delay(5)
+                                        val text = lonSec.text
+                                        lonSec = lonSec.copy(
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
+                                        )
+                                    }
+                                }
+                            },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                         singleLine = true,
                         isError = coordError(lonSec, 60, false)
@@ -416,7 +510,7 @@ fun CatchForm(onSubmit: (
                             },
                             modifier = Modifier
                                 .menuAnchor()
-                                .width(80.dp),
+                                .width(88.dp),
                             label = { Text("Dir") }
                         )
                         ExposedDropdownMenu(
@@ -488,8 +582,21 @@ fun CatchForm(onSubmit: (
                     },
                     modifier = Modifier
                         .width(144.dp)
+                        .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                            if (!it.hasFocus && numSmall.text
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numSmall.text
+                                    numSmall = numSmall.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
+                                    )
+                                }
+                            }
+                            else if (!it.hasFocus && numSmall.text
                                     .trim()
                                     .isEmpty()
                             ) {
@@ -507,8 +614,21 @@ fun CatchForm(onSubmit: (
                     },
                     modifier = Modifier
                         .width(144.dp)
+                        .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                            if (!it.hasFocus && numMedium.text
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numMedium.text
+                                    numMedium = numMedium.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
+                                    )
+                                }
+                            }
+                            else if (!it.hasFocus && numMedium.text
                                     .trim()
                                     .isEmpty()
                             ) {
@@ -526,8 +646,21 @@ fun CatchForm(onSubmit: (
                     },
                     modifier = Modifier
                         .width(144.dp)
+                        .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                            if (!it.hasFocus && numLarge.text
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numLarge.text
+                                    numLarge = numLarge.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
+                                    )
+                                }
+                            }
+                            else if (!it.hasFocus && numLarge.text
                                     .trim()
                                     .isEmpty()
                             ) {
@@ -545,7 +678,19 @@ fun CatchForm(onSubmit: (
                     if (chkNum(it.text, false)) { wtReturned = it }
                 },
                 modifier = Modifier.onFocusChanged {
-                    if(!it.hasFocus && wtReturned.text.trim().isEmpty()) {
+                    if (it.isFocused) {
+                        scope.launch {
+                            delay(5)
+                            val text = wtReturned.text
+                            wtReturned = wtReturned.copy(
+                                selection = TextRange(
+                                    0,
+                                    text.length
+                                )
+                            )
+                        }
+                    }
+                    else if(!it.hasFocus && wtReturned.text.trim().isEmpty()) {
                         wtReturned = wtReturned.copy("0.0")
                     }
                 },
@@ -563,7 +708,19 @@ fun CatchForm(onSubmit: (
                         if (chkNum(it.text)) { numLobsterRetained = it }
                     },
                     modifier = Modifier.onFocusChanged {
-                        if(!it.hasFocus && numLobsterRetained.text.trim().isEmpty()) {
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numLobsterRetained.text
+                                numLobsterRetained = numLobsterRetained.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if(!it.hasFocus && numLobsterRetained.text.trim().isEmpty()) {
                             numLobsterRetained = numLobsterRetained.copy("0.0")
                         }
                     },
@@ -577,7 +734,19 @@ fun CatchForm(onSubmit: (
                         if (chkNum(it.text)) { numLobsterReturned = it }
                     },
                     modifier = Modifier.onFocusChanged {
-                        if(!it.hasFocus && numLobsterReturned.text.trim().isEmpty()) {
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numLobsterReturned.text
+                                numLobsterReturned = numLobsterReturned.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if(!it.hasFocus && numLobsterReturned.text.trim().isEmpty()) {
                             numLobsterReturned = numLobsterReturned.copy("0.0")
                         }
                     },
@@ -593,7 +762,19 @@ fun CatchForm(onSubmit: (
                         if (chkNum(it.text)) { numBrownRetained = it }
                     },
                     modifier = Modifier.onFocusChanged {
-                        if(!it.hasFocus && numBrownRetained.text.trim().isEmpty()) {
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numBrownRetained.text
+                                numBrownRetained = numBrownRetained.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if(!it.hasFocus && numBrownRetained.text.trim().isEmpty()) {
                             numBrownRetained = numBrownRetained.copy("0.0")
                         }
                     },
@@ -608,7 +789,19 @@ fun CatchForm(onSubmit: (
                     },
                     label = { Text("Brown crabs returned") },
                     modifier = Modifier.onFocusChanged {
-                        if(!it.hasFocus && numBrownReturned.text.trim().isEmpty()) {
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numBrownReturned.text
+                                numBrownReturned = numBrownReturned.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if(!it.hasFocus && numBrownReturned.text.trim().isEmpty()) {
                             numBrownReturned = numBrownReturned.copy("0.0")
                         }
                     },
@@ -624,7 +817,19 @@ fun CatchForm(onSubmit: (
                     },
                     label = { Text("Velvet crabs retained") },
                     modifier = Modifier.onFocusChanged {
-                        if(!it.hasFocus && numVelvetRetained.text.trim().isEmpty()) {
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numVelvetRetained.text
+                                numVelvetRetained = numVelvetRetained.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if(!it.hasFocus && numVelvetRetained.text.trim().isEmpty()) {
                             numVelvetRetained = numVelvetRetained.copy("0.0")
                         }
                     },
@@ -638,7 +843,19 @@ fun CatchForm(onSubmit: (
                     },
                     label = { Text("Velvet crabs returned") },
                     modifier = Modifier.onFocusChanged {
-                        if(!it.hasFocus && numVelvetReturned.text.trim().isEmpty()) {
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numVelvetReturned.text
+                                numVelvetReturned = numVelvetReturned.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if(!it.hasFocus && numVelvetReturned.text.trim().isEmpty()) {
                             numVelvetReturned = numVelvetReturned.copy("0.0")
                         }
                     },
@@ -658,7 +875,19 @@ fun CatchForm(onSubmit: (
                         }
                     },
                     modifier = Modifier.onFocusChanged {
-                        if (!it.hasFocus && numWrasseRetained.text.trim()
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numWrasseRetained.text
+                                numWrasseRetained = numWrasseRetained.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if (!it.hasFocus && numWrasseRetained.text.trim()
                                 .isEmpty()
                         ) {
                             numWrasseRetained = numWrasseRetained.copy("0.0")
@@ -676,7 +905,19 @@ fun CatchForm(onSubmit: (
                         }
                     },
                     modifier = Modifier.onFocusChanged {
-                        if (!it.hasFocus && numWrasseReturned.text.trim()
+                        if (it.isFocused) {
+                            scope.launch {
+                                delay(5)
+                                val text = numWrasseReturned.text
+                                numWrasseReturned = numWrasseReturned.copy(
+                                    selection = TextRange(
+                                        0,
+                                        text.length
+                                    )
+                                )
+                            }
+                        }
+                        else if (!it.hasFocus && numWrasseReturned.text.trim()
                                 .isEmpty()
                         ) {
                             numWrasseReturned = numWrasseReturned.copy("0.0")
