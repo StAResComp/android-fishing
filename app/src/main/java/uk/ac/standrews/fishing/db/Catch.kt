@@ -122,16 +122,19 @@ data class WrasseCatch(
  * @property lon the longitude of the catch location
  * @property timestamp when the catch was made
  * @property uploaded when the data was uploaded to the server
+ * @property nephropsId the id of the nephrops catch record, if any
  * @property numSmallCases the number of "small" nephrops cases
  * @property numMediumCases the number of "medium" nephrops cases
  * @property numLargeCases the number of "large" nephrops cases
  * @property wtReturned the weight of nephrops returned
- * @property numlobsterRetained the number of lobsters retained
- * @property numlobsterReturned the number of lobsters returned
+ * @property lobsterCrabId the id of the lobster/crab catch record, if any
+ * @property numLobsterRetained the number of lobsters retained
+ * @property numLobsterReturned the number of lobsters returned
  * @property numBrownRetained the number of brown crabs retained
  * @property numBrownReturned the number of brown crabs returned
  * @property numVelvetRetained the number of velvet crabs retained
  * @property numVelvetReturned the number of velvet crabs returned
+ * @property wrasseId the id of the wrasse catch record, if any
  * @property numWrasseRetained the number of velvet crabs retained
  * @property numWrasseReturned the number of velvet crabs returned
  */
@@ -148,8 +151,8 @@ data class FullCatch (
     val numLargeCases: Double?,
     val wtReturned: Double?,
     val lobsterCrabId: Int?,
-    val numlobsterRetained: Int?,
-    val numlobsterReturned: Int?,
+    val numLobsterRetained: Int?,
+    val numLobsterReturned: Int?,
     val numBrownRetained: Int?,
     val numBrownReturned: Int?,
     val numVelvetRetained: Int?,

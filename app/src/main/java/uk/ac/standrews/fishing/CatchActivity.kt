@@ -1191,12 +1191,12 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                                        .padding(4.dp)
                                ) {
                                    Column {
-                                       Text("Lobsters retained: ${it.numlobsterRetained}")
+                                       Text("Lobsters retained: ${it.numLobsterRetained}")
                                        Text("B. crabs retained: ${it.numBrownRetained}")
                                        Text("V. crabs retained: ${it.numVelvetRetained}")
                                    }
                                    Column {
-                                       Text("Lobsters returned: ${it.numlobsterReturned}")
+                                       Text("Lobsters returned: ${it.numLobsterReturned}")
                                        Text("B. crabs returned: ${it.numBrownReturned}")
                                        Text("V. crabs returned: ${it.numVelvetReturned}")
                                    }
