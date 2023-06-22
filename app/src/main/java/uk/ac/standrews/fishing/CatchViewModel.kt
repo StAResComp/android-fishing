@@ -47,6 +47,7 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
         numVelvetReturned: Int,
         numWrasseRetained: Int,
         numWrasseReturned: Int,
+        deviceId: String
     ) = viewModelScope.launch {
         val aCatch = Catch(
             stringId = stringId, lat = lat, lon = lon, timestamp = timestamp
@@ -82,7 +83,7 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
             )
             repository.insertWrasseCatch(wrasseCatch)
         }
-        //this@CatchViewModel.postCatches()
+        this@CatchViewModel.postCatches(deviceId)
     }
     fun postCatches(deviceId : String) = viewModelScope.launch {
         val catchesToPost = CatchesToPost(deviceId, this@CatchViewModel.repository.unsubmittedFullCatches())

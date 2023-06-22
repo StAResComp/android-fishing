@@ -118,7 +118,7 @@ class CatchActivity : ComponentActivity() {
                         deviceId
                     )
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
-                    CatchForm(this@CatchActivity.catchViewModel::insertFullCatch)
+                    CatchForm(this@CatchActivity.catchViewModel::insertFullCatch, deviceId)
                     Divider(modifier = Modifier.padding(vertical = 8.dp))
                     CatchList(this@CatchActivity.catchViewModel.allFullCatches)
                 }
@@ -148,8 +148,10 @@ fun CatchForm(onSubmit: (
         numVelvetRetained: Int,
         numVelvetReturned: Int,
         numWrasseRetained: Int,
-        numWrasseReturned: Int
-    ) -> Unit) {
+        numWrasseReturned: Int,
+        deviceId: String
+    ) -> Unit,
+              deviceId: String) {
 
 
     val formatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.UK)
@@ -1011,7 +1013,8 @@ fun CatchForm(onSubmit: (
                         numVelvetRetained.text.toInt(),
                         numVelvetReturned.text.toInt(),
                         numWrasseRetained.text.toInt(),
-                        numWrasseReturned.text.toInt()
+                        numWrasseReturned.text.toInt(),
+                        deviceId
                     )
                     catchType = "Select catch type"
                     stringId = TextFieldValue("")
