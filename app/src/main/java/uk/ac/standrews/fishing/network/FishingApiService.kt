@@ -11,7 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import uk.ac.standrews.fishing.db.FullCatch
 
-private const val BASE_URL = "https://arts.st-andrews.ac.uk/sifids/"
+private const val BASE_URL = "https://fishing.st-andrews.ac.uk/rifg/"
 private val interceptor = HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
 private val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 private val retrofit = Retrofit.Builder()
@@ -30,7 +30,7 @@ class CatchesToPost(
 }
 
 interface FishingApiService {
-    @POST("json-test.php")
+    @POST("app")
     fun postCatches(@Body body: CatchesToPost): Call<Response<Any>>
 }
 
