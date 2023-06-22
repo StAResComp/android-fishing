@@ -18,7 +18,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
@@ -216,7 +218,9 @@ fun CatchForm(onSubmit: (
     }
 
     Column (
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState()),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Record Catch", style = MaterialTheme.typography.headlineMedium)
@@ -432,7 +436,10 @@ fun CatchForm(onSubmit: (
                                         delay(5)
                                         val text = lonDeg.text
                                         lonDeg = lonDeg.copy(
-                                            selection = TextRange(0, text.length)
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
                                         )
                                     }
                                 }
@@ -606,8 +613,7 @@ fun CatchForm(onSubmit: (
                                         )
                                     )
                                 }
-                            }
-                            else if (!it.hasFocus && numSmall.text
+                            } else if (!it.hasFocus && numSmall.text
                                     .trim()
                                     .isEmpty()
                             ) {
@@ -638,8 +644,7 @@ fun CatchForm(onSubmit: (
                                         )
                                     )
                                 }
-                            }
-                            else if (!it.hasFocus && numMedium.text
+                            } else if (!it.hasFocus && numMedium.text
                                     .trim()
                                     .isEmpty()
                             ) {
@@ -670,8 +675,7 @@ fun CatchForm(onSubmit: (
                                         )
                                     )
                                 }
-                            }
-                            else if (!it.hasFocus && numLarge.text
+                            } else if (!it.hasFocus && numLarge.text
                                     .trim()
                                     .isEmpty()
                             ) {
@@ -721,22 +725,26 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numLobsterRetained.text
-                                numLobsterRetained = numLobsterRetained.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
-                                    )
-                                )
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numLobsterRetained.text
+                                    numLobsterRetained =
+                                        numLobsterRetained.copy(
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
+                                        )
+                                }
+                            } else if (!it.hasFocus && numLobsterRetained.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numLobsterRetained =
+                                    numLobsterRetained.copy("0.0")
                             }
-                        }
-                        else if(!it.hasFocus && numLobsterRetained.text.trim().isEmpty()) {
-                            numLobsterRetained = numLobsterRetained.copy("0.0")
-                        }
-                    },
+                        },
                     label = { Text("Lobsters retained") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -749,22 +757,26 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numLobsterReturned.text
-                                numLobsterReturned = numLobsterReturned.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
-                                    )
-                                )
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numLobsterReturned.text
+                                    numLobsterReturned =
+                                        numLobsterReturned.copy(
+                                            selection = TextRange(
+                                                0,
+                                                text.length
+                                            )
+                                        )
+                                }
+                            } else if (!it.hasFocus && numLobsterReturned.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numLobsterReturned =
+                                    numLobsterReturned.copy("0.0")
                             }
-                        }
-                        else if(!it.hasFocus && numLobsterReturned.text.trim().isEmpty()) {
-                            numLobsterReturned = numLobsterReturned.copy("0.0")
-                        }
-                    },
+                        },
                     label = { Text("Lobsters returned") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -779,22 +791,24 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numBrownRetained.text
-                                numBrownRetained = numBrownRetained.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numBrownRetained.text
+                                    numBrownRetained = numBrownRetained.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
                                     )
-                                )
+                                }
+                            } else if (!it.hasFocus && numBrownRetained.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numBrownRetained = numBrownRetained.copy("0.0")
                             }
-                        }
-                        else if(!it.hasFocus && numBrownRetained.text.trim().isEmpty()) {
-                            numBrownRetained = numBrownRetained.copy("0.0")
-                        }
-                    },
+                        },
                     label = { Text("Brown crabs retained") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -808,22 +822,24 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numBrownReturned.text
-                                numBrownReturned = numBrownReturned.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numBrownReturned.text
+                                    numBrownReturned = numBrownReturned.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
                                     )
-                                )
+                                }
+                            } else if (!it.hasFocus && numBrownReturned.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numBrownReturned = numBrownReturned.copy("0.0")
                             }
-                        }
-                        else if(!it.hasFocus && numBrownReturned.text.trim().isEmpty()) {
-                            numBrownReturned = numBrownReturned.copy("0.0")
-                        }
-                    },
+                        },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
             }
@@ -838,22 +854,25 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numVelvetRetained.text
-                                numVelvetRetained = numVelvetRetained.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numVelvetRetained.text
+                                    numVelvetRetained = numVelvetRetained.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
                                     )
-                                )
+                                }
+                            } else if (!it.hasFocus && numVelvetRetained.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numVelvetRetained =
+                                    numVelvetRetained.copy("0.0")
                             }
-                        }
-                        else if(!it.hasFocus && numVelvetRetained.text.trim().isEmpty()) {
-                            numVelvetRetained = numVelvetRetained.copy("0.0")
-                        }
-                    },
+                        },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
                 OutlinedTextField(
@@ -866,22 +885,25 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numVelvetReturned.text
-                                numVelvetReturned = numVelvetReturned.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numVelvetReturned.text
+                                    numVelvetReturned = numVelvetReturned.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
                                     )
-                                )
+                                }
+                            } else if (!it.hasFocus && numVelvetReturned.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numVelvetReturned =
+                                    numVelvetReturned.copy("0.0")
                             }
-                        }
-                        else if(!it.hasFocus && numVelvetReturned.text.trim().isEmpty()) {
-                            numVelvetReturned = numVelvetReturned.copy("0.0")
-                        }
-                    },
+                        },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
 
@@ -900,24 +922,25 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numWrasseRetained.text
-                                numWrasseRetained = numWrasseRetained.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numWrasseRetained.text
+                                    numWrasseRetained = numWrasseRetained.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
                                     )
-                                )
+                                }
+                            } else if (!it.hasFocus && numWrasseRetained.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numWrasseRetained =
+                                    numWrasseRetained.copy("0.0")
                             }
-                        }
-                        else if (!it.hasFocus && numWrasseRetained.text.trim()
-                                .isEmpty()
-                        ) {
-                            numWrasseRetained = numWrasseRetained.copy("0.0")
-                        }
-                    },
+                        },
                     label = { Text("Wrasse retained") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -932,24 +955,25 @@ fun CatchForm(onSubmit: (
                     modifier = Modifier
                         .padding(horizontal = 2.dp)
                         .onFocusChanged {
-                        if (it.isFocused) {
-                            scope.launch {
-                                delay(5)
-                                val text = numWrasseReturned.text
-                                numWrasseReturned = numWrasseReturned.copy(
-                                    selection = TextRange(
-                                        0,
-                                        text.length
+                            if (it.isFocused) {
+                                scope.launch {
+                                    delay(5)
+                                    val text = numWrasseReturned.text
+                                    numWrasseReturned = numWrasseReturned.copy(
+                                        selection = TextRange(
+                                            0,
+                                            text.length
+                                        )
                                     )
-                                )
+                                }
+                            } else if (!it.hasFocus && numWrasseReturned.text
+                                    .trim()
+                                    .isEmpty()
+                            ) {
+                                numWrasseReturned =
+                                    numWrasseReturned.copy("0.0")
                             }
-                        }
-                        else if (!it.hasFocus && numWrasseReturned.text.trim()
-                                .isEmpty()
-                        ) {
-                            numWrasseReturned = numWrasseReturned.copy("0.0")
-                        }
-                    },
+                        },
                     label = { Text("Wrasse returned") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 )
@@ -1165,13 +1189,13 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                                ) {
                                    Column {
                                        Text("Lobsters retained: ${it.numlobsterRetained}")
-                                       Text("Brown crabs retained: ${it.numBrownRetained}")
-                                       Text("Velvet crabs retained: ${it.numVelvetRetained}")
+                                       Text("B. crabs retained: ${it.numBrownRetained}")
+                                       Text("V. crabs retained: ${it.numVelvetRetained}")
                                    }
                                    Column {
                                        Text("Lobsters returned: ${it.numlobsterReturned}")
-                                       Text("Brown crabs returned: ${it.numBrownReturned}")
-                                       Text("Velvet crabs returned: ${it.numVelvetReturned}")
+                                       Text("B. crabs returned: ${it.numBrownReturned}")
+                                       Text("V. crabs returned: ${it.numVelvetReturned}")
                                    }
                                }
                            }
@@ -1215,7 +1239,9 @@ fun CatchList(catches: LiveData<List<FullCatch>>) {
                            }
                            Divider()
                            Row (
-                               modifier = Modifier.fillMaxWidth().padding(4.dp)
+                               modifier = Modifier
+                                   .fillMaxWidth()
+                                   .padding(4.dp)
                            ) {
                                Text(
                                    if (it.uploaded == null) "Not yet uploaded"

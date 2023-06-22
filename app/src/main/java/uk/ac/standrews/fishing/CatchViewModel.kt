@@ -7,6 +7,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import uk.ac.standrews.fishing.db.Catch
 import uk.ac.standrews.fishing.db.CatchRepository
 import uk.ac.standrews.fishing.db.FullCatch
@@ -15,6 +19,7 @@ import uk.ac.standrews.fishing.db.NephropsCatch
 import uk.ac.standrews.fishing.db.WrasseCatch
 import uk.ac.standrews.fishing.network.CatchesToPost
 import uk.ac.standrews.fishing.network.FishingApi
+import java.lang.Exception
 import java.net.SocketTimeoutException
 import java.util.Calendar
 import java.util.Date
@@ -81,21 +86,40 @@ class CatchViewModel (private val repository: CatchRepository): ViewModel() {
     }
     fun postCatches(deviceId : String) = viewModelScope.launch {
         val catchesToPost = CatchesToPost(deviceId, this@CatchViewModel.repository.unsubmittedFullCatches())
+        Log.d("API", "Data to send: ${catchesToPost.toString()}")
+        Log.d("API", "Includes ${catchesToPost.catches.count()} catches")
         val ids = catchesToPost.getCatchIds()
         try {
-            val submissionResult = FishingApi.retrofitService.postCatches(catchesToPost)
-            Log.d("API",submissionResult)
-            if (false) { //Needs to check submissionResult
-               ids.forEach() {
-                   val aCatch = this@CatchViewModel.repository.getCatch(it)
-                   val cal = Calendar.getInstance()
-                   aCatch.uploaded = cal.time
-                   this@CatchViewModel.repository.updateCatch(aCatch)
-               }
-            }
+            val submissionResult = FishingApi.retrofitService.postCatches(catchesToPost).enqueue(object:
+                Callback<Response<Any>> {
+                    override fun onResponse(call: Call<Response<Any>>, response: Response<Response<Any>>) {
+                        Log.d("API", "Success! ${response.code()}")
+                        if (response.code() == 200) { //Needs to check submissionResult
+                            ids.forEach() {
+                                viewModelScope.launch {
+                                    val aCatch = this@CatchViewModel.repository.getCatch(it)
+                                    val cal = Calendar.getInstance()
+                                    aCatch.uploaded = cal.time
+                                    this@CatchViewModel.repository.updateCatch(aCatch)
+
+                                }
+                            }
+                        }
+                    }
+                    override fun onFailure(call: Call<Response<Any>>, t: Throwable) {
+                        Log.d("API", "Failure")
+                    }
+                })
         }
         catch (e: SocketTimeoutException) {
             Log.e("API", "Connection timed out")
+        }
+        catch (e: Exception) {
+            Log.e("API", "Something else happened")
+            val msg = e.message
+            if (msg != null) {
+                Log.e("API", msg)
+            }
         }
     }
 }
